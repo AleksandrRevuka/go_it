@@ -7,4 +7,4 @@ def parse_args():
 
 
 print(parse_args())
-#   python modul_4/task_14.py first second
+#   python modul_04/task_14.py first second
