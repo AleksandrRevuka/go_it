@@ -5,4 +5,4 @@ def get_fullname(first_name=None, last_name=None, middle_name=None):
         return f"{first_name} {last_name}"
 
 
-get_fullname(first_name=None, last_name=None, middle_name=None)
+print(get_fullname(first_name='None', last_name='None', middle_name='None'))
