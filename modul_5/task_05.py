@@ -1,8 +1,8 @@
-def sanitize_phone_number(phone):
+def sanitize_phone_number(phone: str) -> str:
     return ''.join([number.strip(' , (, ), -, +') for number in phone])
 
 
-def get_phone_numbers_for_countries(list_phones):
+def get_phone_numbers_for_countries(list_phones: list) -> dict:
     cleaned_phones = [sanitize_phone_number(phone) for phone in list_phones]
     sorted_phones = {
         "UA": [phone for phone in cleaned_phones if phone.startswith('380') or phone.startswith('0')],
