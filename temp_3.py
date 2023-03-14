@@ -1,6 +1,6 @@
 import sys
 
-from temp import main as greeting
+from temp_1 import main as greeting
 from temp_2 import main as exiting
 
 

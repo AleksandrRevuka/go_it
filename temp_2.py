@@ -1,4 +1,4 @@
-from temp import get_name
+from temp_1 import get_name
 
 
 def goodbuy(name):
