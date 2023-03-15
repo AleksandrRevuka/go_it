@@ -1,10 +1,16 @@
-def fibonacci(n):
-    if n <= 1:
-        return n
-    else:
-        return fibonacci(n - 1) + fibonacci(n - 2)
+"""fibonacci"""
 
-fibonacci(10)
+# def fibonacci(n):
+#     """fibonacci"""
+#     return n if n <= 1 else fibonacci(n - 1) + fibonacci(n - 2)
+
+
+def fibonacci(n):
+    """fibonacci"""
+    return fibonacci(n - 1) + fibonacci(n - 2) if n > 2 else 1
+
+
+print(fibonacci(10))
 
 
 # M = {0: 0, 1: 1}
