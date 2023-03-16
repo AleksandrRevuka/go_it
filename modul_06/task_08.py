@@ -2,11 +2,11 @@
 вказаний список із параметра source зберігати у файл із параметра output"""
 
 
-def save_applicant_data(source: list, output: str):
-    """save applicant data"""
-    student = [','.join(str(data) for data in data_student.values()) + '\n' for data_student in source]
-    with open(output, 'w') as file_data:
-            file_data.writelines(student)
+# def save_applicant_data(source: list, output: str):
+#     """save applicant data"""
+#     student = [','.join(str(data) for data in data_student.values()) + '\n' for data_student in source]
+#     with open(output, 'w') as file_data:
+#             file_data.writelines(student)
 
 
 # def save_applicant_data(source: list, output: str):
@@ -15,6 +15,15 @@ def save_applicant_data(source: list, output: str):
 
 #     with open(output, 'w') as file_data:
 #         file_data.writelines(list1)
+
+
+def save_applicant_data(source: list, output: str):
+    """save applicant data"""
+    with open(output, 'w') as file_data:
+        for data_student in source:
+            new_format_data_student = ','.join(str(data) for data in data_student.values())
+            changed_format_data_student = new_format_data_student.strip(',') + '\n'
+            file_data.write(changed_format_data_student)
 
 
 sourc = [
@@ -42,4 +51,3 @@ sourc = [
     ]
 
 save_applicant_data(sourc, 'modul_06//task_08.txt')
-
