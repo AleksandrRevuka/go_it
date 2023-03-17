@@ -21,9 +21,8 @@ def save_applicant_data(source: list, output: str):
     """save applicant data"""
     with open(output, 'w') as file_data:
         for data_student in source:
-            new_format_data_student = ','.join(str(data) for data in data_student.values())
-            changed_format_data_student = new_format_data_student.strip(',') + '\n'
-            file_data.write(changed_format_data_student)
+            new_format_data_student = ','.join(str(data) for data in data_student.values()) + '\n'
+            file_data.write(new_format_data_student)
 
 
 sourc = [
