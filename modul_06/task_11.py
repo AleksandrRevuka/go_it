@@ -9,5 +9,5 @@ def get_credentials_users(path: list):
         return [el.strip('\n') for el in result]
 
 
-
-print(get_credentials_users('modul_06//task_10.bin'))
+if __name__ == "__main__":
+    print(get_credentials_users('modul_06//task_10.bin'))
