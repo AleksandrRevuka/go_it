@@ -1,6 +1,7 @@
 """Sort garbage"""
 import os
 import sys
+import shutil
 from typing import NamedTuple
 from string import punctuation
 from prettytable import PrettyTable
@@ -30,12 +31,16 @@ def parse_path() -> str:
 
 def normalize(name: str) -> str:
     """Converts Cyrillic to Latin and assigns characters to '_'."""
+
     trans = {}
     for key, value in zip(CYRILLIC_SYMBOLS, TRANSLATION):
         trans[ord(key)] = value
         trans[ord(key.upper())] = value.upper()
-    clean_name = name.translate(trans)
-    return ''.join('_' if symbol in punctuation and symbol != '.' else symbol for symbol in clean_name)
+
+    clean_name = ''.join('_' if symbol in punctuation and symbol != '.' else symbol
+                         for symbol in name)
+
+    return clean_name.translate(trans)
 
 
 def main(folder):
@@ -45,7 +50,7 @@ def main(folder):
 
 
 if __name__ == '__main__':
-    
+
     CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
     TRANSLATION = (
         "a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l",
