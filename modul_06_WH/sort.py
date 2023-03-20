@@ -2,7 +2,7 @@
 import os
 import sys
 from typing import NamedTuple
-from string import digits, ascii_letters, punctuation
+from string import punctuation
 from prettytable import PrettyTable
 
 
@@ -16,27 +16,43 @@ class NameFolders(NamedTuple):
     unknown_extensions: str
 
 
-def chack_path(test_path: str) -> bool:
+def is_folder(test_path: str) -> bool:
     """Checking the path for correctness"""
-    try:
-        if os.path.isfile(test_path):
-            return True
-    except OSError as error:
-        print(f"{error}, 'My error'")
+    if os.path.isdir(test_path):
+        return True
     return False
 
 
 def parse_path() -> str:
     """Get path from input data"""
-    return " ".join(sys.argv[1])
+    return "".join(arg for arg in sys.argv[1])
 
 
-def main():
+def normalize(name: str) -> str:
+    """Converts Cyrillic to Latin and assigns characters to '_'."""
+    trans = {}
+    for key, value in zip(CYRILLIC_SYMBOLS, TRANSLATION):
+        trans[ord(key)] = value
+        trans[ord(key.upper())] = value.upper()
+    clean_name = name.translate(trans)
+    return ''.join('_' if symbol in punctuation and symbol != '.' else symbol for symbol in clean_name)
+
+
+def main(folder):
     """Main controller"""
-    print("main")
+    print(folder)
+    print(normalize('txt/$_пантелеймон.txt'))
 
 
 if __name__ == '__main__':
+    
+    CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
+    TRANSLATION = (
+        "a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l",
+        "m", "n", "o", "p", "r", "s", "t", "u", "f", "h", "ts", "ch", "sh",
+        "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g"
+    )
+
     IMAGES_EXTENSIONS = ['JPEG', 'PNG', 'JPG', 'SVG']
     VIDEO_EXTENSIONS = ['AVI', 'MP4', 'MOV', 'MKV']
     DOCUMENS_EXTENSIONS = ['DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX']
@@ -44,8 +60,10 @@ if __name__ == '__main__':
     ARCHIVES_EXTENSIONS = ['ZIP', 'GZ', 'TAR']
     UNKNOWN_EXTENSIONS = []
 
-    path_folder = parse_path
-    if chack_path(path_folder):
-        main()
+    folder_path = parse_path()
+    if is_folder(folder_path):
+        main(folder_path)
     else:
         print("Something wrong, try again")
+
+# python modul_06_WH/sort.py /home/alex/Desktop/garbage
