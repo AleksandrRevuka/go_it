@@ -32,15 +32,12 @@ def parse_path() -> str:
 def normalize(name: str) -> str:
     """Converts Cyrillic to Latin and assigns characters to '_'."""
 
-    trans = {}
-    for key, value in zip(CYRILLIC_SYMBOLS, TRANSLATION):
-        trans[ord(key)] = value
-        trans[ord(key.upper())] = value.upper()
+    cyrillic_symbols = CYRILLIC_SYMBOLS + CYRILLIC_SYMBOLS.upper()
+    cyrillic_symbols_all = [ord(symbol) for symbol in cyrillic_symbols]
+    translation = TRANSLATION + [symbol.upper() for symbol in TRANSLATION]
+    trans = dict(zip(cyrillic_symbols_all, translation))
 
-    clean_name = ''.join('_' if symbol in punctuation and symbol != '.' else symbol
-                         for symbol in name)
-
-    return clean_name.translate(trans)
+    return name.translate(trans)
 
 
 def main(folder):
