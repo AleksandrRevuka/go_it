@@ -3,7 +3,7 @@ import os
 import sys
 import shutil
 from typing import NamedTuple
-from prettytable import PrettyTable
+# from prettytable import PrettyTable
 
 
 class InfoFile(NamedTuple):
@@ -11,6 +11,7 @@ class InfoFile(NamedTuple):
     name: str
     extension: str
     path: str
+    old_path: str
 
 
 def is_folder(test_path: str) -> bool:
@@ -48,7 +49,7 @@ def sorting_files_into_folders(data):
     """Sorting files into folders"""
     images = {}
     video = {}
-    documens = {}
+    documents = {}
     audio = {}
     archives = {}
     unknown_extensions = {}
@@ -57,29 +58,24 @@ def sorting_files_into_folders(data):
     for key, file_info in data.items():
         file_extension = file_info.extension
         if file_extension.upper() in IMAGES_EXTENSIONS:
-            images[key] = file_info
+            images[key] = ['images', file_info]
 
         elif file_extension.upper() in VIDEO_EXTENSIONS:
-            video[key] = file_info
+            video[key] = ['video', file_info]
 
-        elif file_extension.upper() in DOCUMENS_EXTENSIONS:
-            documens[key] = file_info
+        elif file_extension.upper() in DOCUMENTS_EXTENSIONS:
+            documents[key] = ['documents', file_info]
 
         elif file_extension.upper() in AUDIO_EXTENSIONS:
-            audio[key] = file_info
+            audio[key] = ['audio', file_info]
 
         elif file_extension.upper() in ARCHIVES_EXTENSIONS:
-            archives[key] = file_info
+            archives[key] = ['archives', file_info]
 
         else:
             unknown_extensions[key] = file_info
-    folders = [images, video, documens, audio, archives, unknown_extensions]
-    # print(f'{images}\n\n')
-    # print(f'\n\n{video}')
-    # print(f'\n\n{documens}')
-    # print(f'\n\n{audio}')
-    # print(f'\n\n{archives}')
-    # print(f'\n\n{unknown_extensions}')
+    folders = [images, video, documents, audio, archives, unknown_extensions]
+    
     return folders
 
 
@@ -97,15 +93,9 @@ def scan_files_and_folders(path: str, root_directory=None, files_info_data={}) -
         if os.path.isfile(object_full):
             name_file, extension = os.path.splitext(
                 os.path.basename(object_full))
-            file_info = InfoFile(name_file, extension, path)
-
-            if object in files_info_data:
-                copy_number = 1
-                while f"{name_file}_copy{copy_number}{extension}" in files_info_data:
-                    copy_number += 1
-                object = f"{name_file}_copy{copy_number}{extension}"
-
-            files_info_data[object] = file_info
+            file_info = InfoFile(name_file, extension, path, None)
+            files_info_data[id(object)] = file_info
+            
         else:
             if path == root_directory:
                 if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
@@ -116,38 +106,73 @@ def scan_files_and_folders(path: str, root_directory=None, files_info_data={}) -
     return files_info_data
 
 
-def print_list_fails(folders_data: list) -> None:
+def print_list_fails(folders_data: list, unknown_extensions) -> None:
     """Print"""
-    images, video, documens, audio, archives, unknown_extensions = folders_data
+    images, video, documents, audio, archives = folders_data[:-1]
     
-    images_folder = ['images', [file_img.name + file_img.extension
-                                for file_img in images.values()]]
-    video_folder = ['video', [file_video.name + file_video.extension
-                              for file_video in video.values()]]
-    documens_folder = ['documents', [file_doc.name + file_doc.extension
-                                     for file_doc in documens.values()]]
-    audio_folder = ['audio', [file_audio.name + file_audio.extension
-                              for file_audio in audio.values()]]
-    archives_folder = ['archives', [file_archive.name + file_archive.extension
-                                    for file_archive in archives.values()]]
-    unknown_extensions_folder = ['nknown_extensions', list(set(file_info.extension
-                                                               for file_info in unknown_extensions.values()))]
+    folder_img = []
+    for file_img in images.values():
+        folder_img.append(file_img[1].name + file_img[1].extension)
+        folder_name = file_img[0]
+    print(f"List with {folder_name}: {folder_img} \n")
+    
+    folder_video = []
+    for file_video in video.values():
+        folder_video.append(file_video[1].name + file_video[1].extension)
+        folder_name = file_video[0]
+    print(f"List with {folder_name}: {folder_video} \n")
+    
+    folder_documents = []
+    for file_doc in documents.values():
+        folder_documents.append(file_doc[1].name + file_doc[1].extension)
+        folder_name = file_doc[0]
+    print(f"List with {folder_name}: {folder_documents} \n")
+    
+    folder_audio = []
+    for file_audio in audio.values():
+        folder_audio.append(file_audio[1].name + file_audio[1].extension)
+        folder_name = file_audio[0]
+    print(f"List with {folder_name}: {folder_audio} \n")
+    
+    folder_archives = []
+    for file_archives in archives.values():
+        folder_archives.append(file_archives[1].name + file_archives[1].extension)
+        folder_name = file_archives[0]
+    print(f"List with {folder_name}: {folder_archives} \n")
+    
+    
+    folder_un_ext = []
+    for file_un_ext in unknown_extensions.values():
+        folder_un_ext.append(file_un_ext.extension)
+    print(f"List with unknown_extensions: {list(set(folder_un_ext))} \n")
+    
 
-    folders = [images_folder, video_folder, documens_folder,
-               audio_folder, archives_folder, unknown_extensions_folder]
-
-    for folder in folders:
-        print(f"List with {folder[0]}: {folder[1]}, '\n'")
-
-
-def normalization_and_file_movement_controller(folder_data: list):
+def normalization_and_file_movement_controller(folder_data: list, path: str):
     """Controller"""
-    # images, video, documens, audio, archives = folder_data[:-1]
-    
+    new_files_info_data = {}
     for data in folder_data[:-1]:
         for key, file_data in data.items():
-            data[key][file_data.name] = normalize(file_data.name)
-            print(file_data.name)
+
+            normalize_name = normalize(file_data[1].name)
+            normalize_name_path = ''.join(path + '/' + file_data[0])
+            normalize_name_with_path = os.path.join(normalize_name_path, normalize_name + file_data[1].extension)
+
+            if not os.path.exists(normalize_name_with_path):
+                # shutil.move(file_old, normalize_name_with_path)
+                new_files_info_data[key] = InfoFile(normalize_name, file_data[1].extension, normalize_name_path, file_data[1].path)
+            else:
+                copy_number = 1
+                while True:    
+                    new_name = f"{normalize_name}_copy{copy_number}"
+                    new_path = os.path.join(normalize_name_path, new_name + file_data[1].extension)
+                    
+                    if not os.path.exists(new_path):
+                        # shutil.move(file_old, new_path)
+                        new_files_info_data[key] = InfoFile(normalize_name, file_data[1].extension, normalize_name_path, file_data[1].path)
+                        break
+                    copy_number += 1
+                    
+    return new_files_info_data                
 
 
 def main(folder: str):
@@ -155,10 +180,12 @@ def main(folder: str):
     print(folder)
     files_info = scan_files_and_folders(folder, folder)
     # check_for_repetition_of_names(files_info)
+    # print(files_info)
     folders_with_files = sorting_files_into_folders(files_info)
-    normalization_and_file_movement_controller(folders_with_files)
-    
-    # print_list_fails(folders_with_files)
+    unknown_extensions_folder = folders_with_files[-1]
+    files_info_new = normalization_and_file_movement_controller(folders_with_files, folder)
+    folders_with_files_new = sorting_files_into_folders(files_info_new)
+    print_list_fails(folders_with_files_new, unknown_extensions_folder)
 
 
 if __name__ == '__main__':
@@ -172,7 +199,7 @@ if __name__ == '__main__':
 
     IMAGES_EXTENSIONS = ['.JPEG', '.PNG', '.JPG', '.SVG', '.IMG']
     VIDEO_EXTENSIONS = ['.AVI', '.MP4', '.MOV', '.MKV']
-    DOCUMENS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
+    DOCUMENTS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
     AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
     ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR', '.RAR']
 
