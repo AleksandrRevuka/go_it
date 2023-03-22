@@ -15,8 +15,8 @@ def get_recipe(path: str, search_id: str) -> dict:
                 recipe.append(data.pop(0))
                 recipe.append(data)
                 return dict(zip(parameters, recipe))
-            else:
-                return None
+            
+    return None
 
 
 
