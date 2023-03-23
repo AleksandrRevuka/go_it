@@ -40,6 +40,18 @@ def normalize(name: str) -> str:
     return trans_name.translate(trans)
 
 
+def get_max_depth(path):
+    """
+    Returns the greatest folder nesting depth for the given path.
+    """
+    max_depth = 0
+    for root, dirs, files in os.walk(path):
+        depth = root.count(os.sep)
+        if depth > max_depth:
+            max_depth = depth
+    return max_depth
+
+
 def check_for_repetition_of_names(data):
     """Check for repetition of names"""
     ...
@@ -205,24 +217,76 @@ def normalization_and_file_movement_controller(folder_data: list, path: str):
     return new_files_info_data
 
 
+# def deletes_empty_folders(path_folder, root_directory):
+#     """Del"""
+#     for object in os.listdir(path_folder):
+#         object_full_path = os.path.join(path_folder, object)
+#         if os.path.isdir(object_full_path):
+            
+#             if path_folder == root_directory:
+#                 if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
+#                     if os.listdir(object_full_path):
+#                         deletes_empty_folders(object_full_path, root_directory)
+#                     else:
+#                         os.rmdir(object_full_path)
+#             else:
+#                 if os.listdir(object_full_path):
+#                     deletes_empty_folders(object_full_path, root_directory)
+#                 else:
+#                     os.rmdir(object_full_path)
+                    
+#         elif os.path.isfile(object_full_path):
+#             continue
+
+def deletes_empty_folders(path_folder, root_directory):
+    """Delete empty folders"""
+    for object in os.listdir(path_folder):
+        object_full_path = os.path.join(path_folder, object)
+        if os.path.isdir(object_full_path):
+            if os.listdir(object_full_path):
+                # Recursively delete empty subfolders
+                deletes_empty_folders(object_full_path, root_directory)
+            else:
+                # Delete empty folder
+                if path_folder != root_directory or object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
+                    try:
+                        os.rmdir(object_full_path)
+                    except OSError:
+                        # If rmdir fails, use shutil.rmtree to delete non-empty folders
+                        shutil.rmtree(object_full_path)
+            
+        elif os.path.isfile(object_full_path):
+            continue
+
+
 def main(folder: str):
     """Main controller"""
     print(folder)
-    files_info = scan_files_and_folders(folder, folder)
-    # check_for_repetition_of_names(files_info)
-
-    for file in files_info.values():
-        print(file.name, file.extension)
+    max_depth = get_max_depth(folder)
+    print(max_depth)
     
-    # print(list(set(file.extension for file in files_info.values())))
-    # print(files_info)
-    folders_with_files, extensions = sorting_files_into_folders(files_info)
-   
-    files_info_new = normalization_and_file_movement_controller(
-        folders_with_files, folder)
-    folders_extensions = extensions
-    folders_with_files_new, extensions = sorting_files_into_folders(files_info_new)
-    print_list_fails(folders_with_files_new, folders_extensions)
+    while max_depth == 0:
+        print(max_depth)
+        files_info = scan_files_and_folders(folder, folder)
+        # check_for_repetition_of_names(files_info)
+
+        # for file in files_info.values():
+        #     print(file.name, file.extension)
+        
+        # print(list(set(file.extension for file in files_info.values())))
+        # print(files_info)
+        folders_with_files, extensions = sorting_files_into_folders(files_info)
+    
+        files_info_new = normalization_and_file_movement_controller(
+            folders_with_files, folder)
+        folders_extensions = extensions
+        folders_with_files_new, extensions = sorting_files_into_folders(files_info_new)
+        print_list_fails(folders_with_files_new, folders_extensions)
+        
+        deletes_empty_folders(folder, folder)
+        max_depth -= 1
+    
+    # scan_directory(folder)
 
 
 if __name__ == '__main__':
