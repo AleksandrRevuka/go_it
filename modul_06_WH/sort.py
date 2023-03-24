@@ -2,6 +2,7 @@
 import os
 import sys
 import shutil
+import time
 from typing import NamedTuple
 # from prettytable import PrettyTable
 
@@ -68,7 +69,6 @@ def sorting_files_into_folders(data):
     known_extensions = {}
     print(len(data))
 
-
     for key, file_info in data.items():
         file_extension = file_info.extension
         if file_extension.upper() in IMAGES_EXTENSIONS:
@@ -96,7 +96,7 @@ def sorting_files_into_folders(data):
         else:
             unknown_extensions[key] = file_info
             # print(unknown_extensions)
-            
+
     folders = [images, video, documents, audio, archives]
     folders_extensions = [unknown_extensions, known_extensions]
     return folders, folders_extensions
@@ -122,9 +122,11 @@ def scan_files_and_folders(path: str, root_directory=None, files_info_data={}) -
         else:
             if path == root_directory:
                 if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
-                    files_info_data = scan_files_and_folders(object_full, root_directory, files_info_data)
+                    files_info_data = scan_files_and_folders(
+                        object_full, root_directory, files_info_data)
             else:
-                files_info_data = scan_files_and_folders(object_full, root_directory, files_info_data)
+                files_info_data = scan_files_and_folders(
+                    object_full, root_directory, files_info_data)
 
     return files_info_data
 
@@ -133,7 +135,7 @@ def print_list_fails(folders_data: list, extensions_data) -> None:
     """Print"""
     images, video, documents, audio, archives = folders_data
     unknown_extensions, known_extensions = extensions_data
-    
+
     if images:
         folder_img = []
         for file_img in images.values():
@@ -188,7 +190,7 @@ def normalization_and_file_movement_controller(folder_data: list, path: str):
     new_files_info_data = {}
     for data in folder_data:
         if data:
-            for key, file_data in data.items():
+            for key, file_data in data.copy().items():
                 file_old = os.path.join(
                     file_data[1].path, file_data[1].name + file_data[1].extension)
                 normalize_name = normalize(file_data[1].name)
@@ -200,6 +202,7 @@ def normalization_and_file_movement_controller(folder_data: list, path: str):
                     shutil.move(file_old, normalize_name_with_extension)
                     new_files_info_data[key] = InfoFile(
                         normalize_name, file_data[1].extension, normalize_name_path, file_data[1].path)
+                    data.pop(key)
                 else:
                     copy_number = 1
                     while True:
@@ -211,50 +214,31 @@ def normalization_and_file_movement_controller(folder_data: list, path: str):
                             shutil.move(file_old, new_path)
                             new_files_info_data[key] = InfoFile(
                                 new_name, file_data[1].extension, normalize_name_path, file_data[1].path)
+                            data.pop(key)
                             break
                         copy_number += 1
 
     return new_files_info_data
 
 
-# def deletes_empty_folders(path_folder, root_directory):
-#     """Del"""
-#     for object in os.listdir(path_folder):
-#         object_full_path = os.path.join(path_folder, object)
-#         if os.path.isdir(object_full_path):
-            
-#             if path_folder == root_directory:
-#                 if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
-#                     if os.listdir(object_full_path):
-#                         deletes_empty_folders(object_full_path, root_directory)
-#                     else:
-#                         os.rmdir(object_full_path)
-#             else:
-#                 if os.listdir(object_full_path):
-#                     deletes_empty_folders(object_full_path, root_directory)
-#                 else:
-#                     os.rmdir(object_full_path)
-                    
-#         elif os.path.isfile(object_full_path):
-#             continue
-
 def deletes_empty_folders(path_folder, root_directory):
-    """Delete empty folders"""
+    """Del"""
     for object in os.listdir(path_folder):
         object_full_path = os.path.join(path_folder, object)
         if os.path.isdir(object_full_path):
-            if os.listdir(object_full_path):
-                # Recursively delete empty subfolders
-                deletes_empty_folders(object_full_path, root_directory)
-            else:
-                # Delete empty folder
-                if path_folder != root_directory or object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
-                    try:
+
+            if path_folder == root_directory:
+                if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
+                    if os.listdir(object_full_path):
+                        deletes_empty_folders(object_full_path, root_directory)
+                    else:
                         os.rmdir(object_full_path)
-                    except OSError:
-                        # If rmdir fails, use shutil.rmtree to delete non-empty folders
-                        shutil.rmtree(object_full_path)
-            
+            else:
+                if os.listdir(object_full_path):
+                    deletes_empty_folders(object_full_path, root_directory)
+                else:
+                    os.rmdir(object_full_path)
+
         elif os.path.isfile(object_full_path):
             continue
 
@@ -263,29 +247,40 @@ def main(folder: str):
     """Main controller"""
     print(folder)
     max_depth = get_max_depth(folder)
-    print(max_depth)
     
-    while max_depth == 0:
-        print(max_depth)
+    while max_depth > 0:
+        print('_____________________max_depth: ', max_depth)
         files_info = scan_files_and_folders(folder, folder)
-        # check_for_repetition_of_names(files_info)
+            # check_for_repetition_of_names(files_info)
 
-        # for file in files_info.values():
-        #     print(file.name, file.extension)
-        
-        # print(list(set(file.extension for file in files_info.values())))
-        # print(files_info)
+        for file in files_info.values():
+            print(file.name, file.extension)
+
+            # print(list(set(file.extension for file in files_info.values())))
+            # print(files_info)
         folders_with_files, extensions = sorting_files_into_folders(files_info)
-    
-        files_info_new = normalization_and_file_movement_controller(
-            folders_with_files, folder)
-        folders_extensions = extensions
-        folders_with_files_new, extensions = sorting_files_into_folders(files_info_new)
-        print_list_fails(folders_with_files_new, folders_extensions)
         
+        files_info_new = normalization_and_file_movement_controller(
+                        folders_with_files, folder)
+        folders_extensions = extensions
+        folders_with_files_new, extensions = sorting_files_into_folders(
+                                            files_info_new)
+        
+        
+        files_info_new = None
+        # folders_with_files = None
+        files_info = None
+        max_depth -= 1
+        time.sleep(1)
+    print_list_fails(folders_with_files_new, folders_extensions)
+    
+
+    max_depth = get_max_depth(folder)
+    while max_depth > 0:
+        print('_____________________max_depth: ', max_depth)
         deletes_empty_folders(folder, folder)
         max_depth -= 1
-    
+        # time.sleep(1)
     # scan_directory(folder)
 
 
@@ -307,6 +302,7 @@ if __name__ == '__main__':
     folder_path = parse_path()
     if is_folder(folder_path):
         main(folder_path)
+     
     else:
         print("Something wrong, try again")
 
