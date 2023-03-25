@@ -1,0 +1,1 @@
+ethminer -F http://ethereumpool.co/?miner=5@0x9493bc52d3c4ae6c1aee6204cf1793beb07fdd23 -G --gpu-batch-size 20

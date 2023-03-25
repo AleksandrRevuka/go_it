@@ -1,0 +1,40 @@
+Genoil's CUDA ethminer
+=====================================================================
+Please consider donating a tiny fraction of the extra performance to:
+ETH: 0xb9310b185455f863f526dab3d245809f6854b4d
+BTC: 1Nu2fMCEBjmnLzqb8qUJpKgq5RoEWFhNcW
+
+Usage ethminer [OPTIONS]
+Options:
+
+Work farming mode:
+    -F,--farm <url>  Put into mining farm mode with the work server at URL (default: http://127.0.0.1:8545)
+    --farm-recheck <n>  Leave n ms between checks for changed work (default: 500).
+    --no-precompute  Don't precompute the next epoch's DAG.
+Ethash verify mode:
+    -w,--check-pow <headerHash> <seedHash> <difficulty> <nonce>  Check PoW credentials for validity.
+
+Benchmarking mode:
+    -M,--benchmark  Benchmark for mining and exit; use with --cpu and --opencl.
+    --benchmark-warmup <seconds>  Set the duration of warmup for the benchmark tests (default: 3).
+    --benchmark-trial <seconds>  Set the duration for each trial for the benchmark tests (default: 3).
+    --benchmark-trials <n>  Set the duration of warmup for the benchmark tests (default: 5).
+    --phone-home <on/off>  When benchmarking, publish results (default: on)
+DAG creation mode:
+    -D,--create-dag <number>  Create the DAG in preparation for mining on given block and exit.
+Mining configuration:
+    -C,--cpu  When mining, use the CPU.
+    -G,--opencl  When mining use the GPU via OpenCL.
+    -U,--cuda  When mining use the GPU via CUDA.
+    --opencl-platform <n>  When mining using -G/--opencl use OpenCL platform n (default: 0).
+    --opencl-device <n>  When mining using -G/--opencl use OpenCL device n (default: 0).
+    -t, --mining-threads <n> Limit number of CPU/GPU miners to n (default: all CPU threads / 1 GPU)
+	--gpu-mining-buffers <n> Number of GPU mining buffers (default: 2)
+	--gpu-batch-size <n> Mining batch size as a power of 2 (default: 18 => 262144)
+	--gpu-workgroup-size <n> Mining workgroup size (opencl) / threads per block (CUDA). Should be multiple of 8. (default: 128).
+	--gpu-devices <0 1 2 ..> Use selected gpu devices (CUDA only). (default: 0, max 8 GPUs)
+	--high-cpu-load Use this flag to get a tiny bit better performance at the cost of high CPU load.
+General Options:
+    -v,--verbosity <0 - 9>  Set the log verbosity from 0 to 9 (default: 8).
+    -V,--version  Show the version and exit.
+    -h,--help  Show this help message and exit.

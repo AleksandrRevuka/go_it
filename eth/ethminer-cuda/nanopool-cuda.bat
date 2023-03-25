@@ -1,0 +1,1 @@
+ethminer -F http://eth1.nanopool.org:8888/0x9493bc52d3c4ae6c1aee6204cf1793beb07fdd23 -U --gpu-batch-size 20
