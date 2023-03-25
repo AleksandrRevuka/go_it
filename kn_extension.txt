@@ -1,0 +1,24 @@
+Релиз_1.0.0.4,.zip,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Alfa 5,archives,Reliz_1.0.0.4
+Katy_Perry_-_Hot_N_Cold,.avi,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Alfa 5,video,Katy_Perry___Hot_N_Cold
+BONES _ BiggestLetdown _ZAKACHAI1.RU_,.mp3,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/tesrfvb,audio,BONES _ BiggestLetdown _ZAKACHAI1.RU_
+BONES _ BiggestLetdown,.mp3,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/tesrfvb,audio,BONES _ BiggestLetdown
+vollist,.txt,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth/ethminer-cuda,documents,vollist_copy1
+help,.txt,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth/ethminer-cuda,documents,help_copy1
+прошивка біоса,.txt,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth/ethminer-cuda,documents,proshivka biosa_copy1
+ethereum_mining_windows_alt,.zip,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth-proxy,archives,ethereum_mining_windows_alt
+a,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth-proxy/log,images,a_copy1
+b,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,images,b
+c,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,images,c
+f,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,images,f
+e,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,images,e
+d,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,images,d
+Katy_Perry_-_Hot_N_Cold,.avi,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/win-unpacked/resources,video,Katy_Perry___Hot_N_Cold_copy1
+opr07HOM,.flv,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/win-unpacked/resources,video,opr07HOM
+opr07HOM,.flv,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/win-unpacked/nodes/eth/win-x64/dfsgdfg/fdgdfgdfgh/gfdhfghfghdfg/dfghfghfgh,video,opr07HOM_copy1
+Katy_Perry_-_Hot_N_Cold,.avi,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/win-unpacked/locales,video,Katy_Perry___Hot_N_Cold_copy2
+TWRP 2.8.7.0 _sd card_,.img,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,images,TWRP 2.8.7.0 _sd card_
+IMG_20170117_14_02_27,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,images,IMG_20170117_14_02_27
+IMG_20170117_140149,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,images,IMG_20170117_140149
+IMG_20170117_140501,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,images,IMG_20170117_140501
+atiflash_274,.zip,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,archives,atiflash_274
+IMG_20170117_140521,.jpg,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/teleskop,images,IMG_20170117_140521

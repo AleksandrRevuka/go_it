@@ -83,7 +83,7 @@ def move_the_file(file_info: InfoFile):
 
     file_new_name_extension = f"{file_info.new_name}{file_info.extension}"
     file_new = os.path.join(path_file_new, file_new_name_extension)
-    print(file_old, "+++++++++", file_new)
+    # print(file_old, "+++++++++", file_new)
     shutil.move(file_old, file_new)
 
 
@@ -95,13 +95,22 @@ def extract_files_from_archive(file_info: InfoFile):
     archive_path_full = os.path.join(archive_path, archive_name)
 
     os.mkdir(path_to_unpack)
-    print(archive_path_full, "_________", path_to_unpack)
+    # print(archive_path_full, "_________", path_to_unpack)
     shutil.unpack_archive(archive_path_full, path_to_unpack)
 
 
 def write_the_file_info_to_the_file(file_info: InfoFile):
     """Write the file info to the file"""
-    ...
+    data_file = [str(file_info.name), str(file_info.extension), str(file_info.path), str(
+        file_info.old_path), str(file_info.folder), str(file_info.new_name)+'\n']
+    data = ','.join(data_file)
+    print(data)
+    if file_info.folder == DIRECTORY["unknown_extensions"]:
+        with open('un_extension.txt', 'a', encoding='utf-8') as un_ext_file:
+            un_ext_file.write(data)
+    else:
+        with open('kn_extension.txt', 'a', encoding='utf-8') as kn_ext_file:
+            kn_ext_file.write(data)
 
 
 def file_controller(file_info: InfoFile):
@@ -111,13 +120,13 @@ def file_controller(file_info: InfoFile):
     file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
                              file_info.old_path, file_info.folder, file_name_new)
 
+    write_the_file_info_to_the_file(file_info_new)
+
     if DIRECTORY['archives'] == file_info.folder:
         move_the_file(file_info_new)
         extract_files_from_archive(file_info_new)
     else:
         move_the_file(file_info_new)
-
-    write_the_file_info_to_the_file(file_info_new)
 
 
 def sorting_files_into_folders(file_info: InfoFile):
@@ -152,6 +161,7 @@ def sorting_files_into_folders(file_info: InfoFile):
     else:
         file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
                                  file_info.old_path, DIRECTORY['unknown_extensions'], None)
+        write_the_file_info_to_the_file(file_info_new)
 
 
 def scan_files_and_folders(path: str, root_directory=None):
@@ -180,58 +190,44 @@ def scan_files_and_folders(path: str, root_directory=None):
                 scan_files_and_folders(object_path, root_directory)
 
 
-def print_list_fails(folders_data: list, extensions_data) -> None:
+def print_fails(files_info: dict[InfoFile]) -> None:
     """Print"""
-    images, video, documents, audio, archives = folders_data
+    images = []
+    video = []
+    documents = []
+    audio = []
+    archives = []
+    
+    for file_info in files_info.values():
+        if file_info.folder == DIRECTORY['images']:
+            images.append(file_info.new_name + file_info.extension)
+
+        if file_info.folder == DIRECTORY['video']:
+            video.append(file_info.new_name + file_info.extension)
+            
+        if file_info.folder == DIRECTORY['documents']:
+            documents.append(file_info.new_name + file_info.extension)
+            
+        if file_info.folder == DIRECTORY['audio']:
+            audio.append(file_info.new_name + file_info.extension) 
+        
+        if file_info.folder == DIRECTORY['archives']:
+            archives.append(file_info.new_name + file_info.extension)
+  
+    print(f"List with {DIRECTORY['images']}: {images} \n")
+    print(f"List with {DIRECTORY['video']}: {video} \n")
+    print(f"List with {DIRECTORY['documents']}: {documents} \n")
+    print(f"List with {DIRECTORY['audio']}: {audio} \n")
+    print(f"List with {DIRECTORY['archives']}: {archives} \n")
+
+
+def print_extensions(extensions_data: list):
+    """Print extensions"""
     unknown_extensions, known_extensions = extensions_data
+    
+    print(f"List with known_extensions: {known_extensions} \n")
 
-    if images:
-        folder_img = []
-        for file_img in images.values():
-            folder_img.append(file_img[1].name + file_img[1].extension)
-            folder_name = file_img[0]
-        print(f"List with {folder_name}: {folder_img} \n")
-
-    if video:
-        folder_video = []
-        for file_video in video.values():
-            folder_video.append(file_video[1].name + file_video[1].extension)
-            folder_name = file_video[0]
-        print(f"List with {folder_name}: {folder_video} \n")
-
-    if documents:
-        folder_documents = []
-        for file_doc in documents.values():
-            folder_documents.append(file_doc[1].name + file_doc[1].extension)
-            folder_name = file_doc[0]
-        print(f"List with {folder_name}: {folder_documents} \n")
-
-    if audio:
-        folder_audio = []
-        for file_audio in audio.values():
-            folder_audio.append(file_audio[1].name + file_audio[1].extension)
-            folder_name = file_audio[0]
-        print(f"List with {folder_name}: {folder_audio} \n")
-
-    if archives:
-        folder_archives = []
-        for file_archives in archives.values():
-            folder_archives.append(
-                file_archives[1].name + file_archives[1].extension)
-            folder_name = file_archives[0]
-        print(f"List with {folder_name}: {folder_archives} \n")
-
-    if known_extensions:
-        folder_kn_ext = []
-        for file_kn_ext in known_extensions.values():
-            folder_kn_ext.append(file_kn_ext.extension)
-        print(f"List with known_extensions: {list(set(folder_kn_ext))} \n")
-
-    if unknown_extensions:
-        folder_un_ext = []
-        for file_un_ext in unknown_extensions.values():
-            folder_un_ext.append(file_un_ext.extension)
-        print(f"List with unknown_extensions: {list(set(folder_un_ext))} \n")
+    print(f"List with unknown_extensions: {unknown_extensions} \n")
 
 
 def deletes_empty_folders(path_folder, root_directory):
@@ -256,19 +252,49 @@ def deletes_empty_folders(path_folder, root_directory):
             continue
 
 
+def read_file_with_data():
+    """Read file with data"""
+    with open('un_extension.txt', 'r', encoding='utf-8') as un_ext_file:
+        un_ext = []
+        for line in un_ext_file:
+            file_info = line.split(',')
+            print(file_info)
+            un_ext.append(file_info[1])
+        un_ext = list(set(un_ext))
+        
+    with open('kn_extension.txt', 'r', encoding='utf-8') as kn_ext_file:
+        files_info = {}
+        kn_ext = []
+        for i, line in enumerate(kn_ext_file):
+            data = line.split(',')
+            
+            file_info = InfoFile(data[0], data[1], data[2], data[3], data[4], data[5].strip('\n'))
+            files_info[i] = file_info
+            kn_ext.append(data[1])
+        kn_ext = list(set(kn_ext))
+            
+    data_extension = [un_ext, kn_ext]
+    
+    return data_extension, files_info
+
 def main(folder: str):
     """Main controller"""
     print(folder)
 
-    print('_____________________start...')
     scan_files_and_folders(folder, folder)
 
     max_depth = get_max_depth(folder)
+    print('_____________________start_del_____________________')
     while max_depth > 0:
-        print('_____________________max_depth: ', max_depth)
         deletes_empty_folders(folder, folder)
         max_depth -= 1
-
+    print('_____________________end_del_____________________')
+    
+    data_extension, files_info = read_file_with_data()
+    
+    print_extensions(data_extension)
+    print_fails(files_info)
+    
 
 if __name__ == '__main__':
     PUNCTUATION = "#$%&'()*+,-/:;<=>?@[\\]^_`{|}~"  # without "."
@@ -290,14 +316,18 @@ if __name__ == '__main__':
     AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
     ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
 
+    with open("un_extension.txt", "w") as f:
+        pass
+
+    with open("kn_extension.txt", "w") as f:
+        pass
+
     folder_path = parse_path()
     if is_folder(folder_path):
+        print('_____________________start_____________________')
         main(folder_path)
-
+        print('_____________________end_____________________')
     else:
         print("Something wrong, try again")
-
-
-# ['images', 'video', 'documens', 'audio', 'archives']
 
 # python modul_06_WH/sort.py /home/alex/Desktop/garbage

@@ -1,0 +1,14 @@
+$R8TFGL7,.bat,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Batniki/New folder,unknown_extensions,None
+DDU,.rar,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Batniki/New folder/Test1,unknown_extensions,None
+Etc+Pasc_EM_NP,.bat,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Batniki,unknown_extensions,None
+atikia64,.sys,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/atiflash_274,unknown_extensions,None
+AtiFlash,.exe,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/atiflash_274,unknown_extensions,None
+vc_redist.x64,.exe,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf,unknown_extensions,None
+cudart64_75,.dll,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth/ethminer-cuda,unknown_extensions,None
+eth-proxy,.conf,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth-proxy,unknown_extensions,None
+eth-proxy,.pid,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Dwarf/eth-proxy,unknown_extensions,None
+ATIWinflash,.exe,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,unknown_extensions,None
+atillk64,.sys,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,unknown_extensions,None
+ATIWinflashchs,.dll,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,unknown_extensions,None
+reddevilhynixpolaris_mod_CV,.rom,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/atiflash,unknown_extensions,None
+app,.asar,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/win-unpacked/resources,unknown_extensions,None
