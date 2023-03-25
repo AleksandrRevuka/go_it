@@ -55,15 +55,18 @@ def normalize(name: str) -> str:
     return trans_name.translate(trans)
 
 
-def check_for_repetition_of_names(path: str, folder: str, name: str, extension: str) -> str:
+def check_for_repetition_of_names(file_info: InfoFile, name: str) -> str:
     """Check for repetition of names"""
-    file_path = os.path.join(path, folder)
-    file_path_full = os.path.join(file_path, name + extension)
+    file_path = os.path.join(file_info.path, file_info.folder)
+    file_extension = f"{name}{file_info.extension}"
+    file_path_full = os.path.join(file_path, file_extension)
+
     if os.path.exists(file_path_full):
         copy_number = 1
         while True:
             new_name = f"{name}_copy{copy_number}"
-            new_path = os.path.join(file_path, new_name + extension)
+            new_name_extension = f"{new_name}{file_info.extension}"
+            new_path = os.path.join(file_path, new_name_extension)
 
             if not os.path.exists(new_path):
                 return new_name
@@ -72,20 +75,28 @@ def check_for_repetition_of_names(path: str, folder: str, name: str, extension: 
         return name
 
 
-def  extract_files_from_archive(file_info: InfoFile):
-    """Extract files from archive"""
-    archive_path = os.path.join(file_info.old_path, file_info.new_name + file_info.extension)
-    
-    path_to_unpack = os.path.join()
-    shutil.unpack_archive(archive_path, path_to_unpack)
-
-
 def move_the_file(file_info: InfoFile):
     """Move the file"""
-    file_old = os.path.join(file_info.old_path, file_info.name + file_info.extension)
+    file_name_extension = f"{file_info.name}{file_info.extension}"
+    file_old = os.path.join(file_info.old_path, file_name_extension)
     path_file_new = os.path.join(file_info.path, file_info.folder)
-    file_new = os.path.join(path_file_new, file_info.new_name)
+
+    file_new_name_extension = f"{file_info.new_name}{file_info.extension}"
+    file_new = os.path.join(path_file_new, file_new_name_extension)
+    print(file_old, "+++++++++", file_new)
     shutil.move(file_old, file_new)
+
+
+def extract_files_from_archive(file_info: InfoFile):
+    """Extract files from archive"""
+    archive_name = f"{file_info.new_name}{file_info.extension}"
+    archive_path = os.path.join(file_info.path, file_info.folder)
+    path_to_unpack = os.path.join(archive_path, file_info.new_name)
+    archive_path_full = os.path.join(archive_path, archive_name)
+
+    os.mkdir(path_to_unpack)
+    print(archive_path_full, "_________", path_to_unpack)
+    shutil.unpack_archive(archive_path_full, path_to_unpack)
 
 
 def write_the_file_info_to_the_file(file_info: InfoFile):
@@ -96,51 +107,51 @@ def write_the_file_info_to_the_file(file_info: InfoFile):
 def file_controller(file_info: InfoFile):
     """Controller"""
     file_name_normal = normalize(file_info.name)
-    file_name_new = check_for_repetition_of_names(file_info.path, file_info.folder, 
-                                                    file_name_normal, file_info.extension)
-    file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path, 
+    file_name_new = check_for_repetition_of_names(file_info, file_name_normal)
+    file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
                              file_info.old_path, file_info.folder, file_name_new)
-    
+
     if DIRECTORY['archives'] == file_info.folder:
-        extract_files_from_archive(file_info)
+        move_the_file(file_info_new)
+        extract_files_from_archive(file_info_new)
     else:
         move_the_file(file_info_new)
-        
+
     write_the_file_info_to_the_file(file_info_new)
 
 
-def sorting_files_into_folders(file_info: InfoFile) -> InfoFile:
+def sorting_files_into_folders(file_info: InfoFile):
     """Sorting files into folders"""
 
     file_extension = file_info.extension
     if file_extension.upper() in IMAGES_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['images'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['images'], None)
         file_controller(file_info_new)
 
     elif file_extension.upper() in VIDEO_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['video'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['video'], None)
         file_controller(file_info_new)
 
     elif file_extension.upper() in DOCUMENTS_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['documents'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['documents'], None)
         file_controller(file_info_new)
 
     elif file_extension.upper() in AUDIO_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['audio'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['audio'], None)
         file_controller(file_info_new)
 
     elif file_extension.upper() in ARCHIVES_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['archives'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['archives'], None)
         file_controller(file_info_new)
 
     else:
-        file_info_new = InfoFile(file_info.name, file_info.extension,
-                                 file_info.path, file_info.old_path, DIRECTORY['unknown_extensions'], None)
+        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
+                                 file_info.old_path, DIRECTORY['unknown_extensions'], None)
 
 
 def scan_files_and_folders(path: str, root_directory=None):
@@ -230,7 +241,7 @@ def deletes_empty_folders(path_folder, root_directory):
         if os.path.isdir(object_full_path):
 
             if path_folder == root_directory:
-                if object.lower() not in ['images', 'video', 'documents', 'audio', 'archives']:
+                if object.lower() not in DIRECTORY:
                     if os.listdir(object_full_path):
                         deletes_empty_folders(object_full_path, root_directory)
                     else:
@@ -248,14 +259,9 @@ def deletes_empty_folders(path_folder, root_directory):
 def main(folder: str):
     """Main controller"""
     print(folder)
-    max_depth = get_max_depth(folder)
 
-    while max_depth > 0:
-        print('_____________________max_depth: ', max_depth)
-        scan_files_and_folders(folder, folder)
-
-        max_depth -= 1
-    # print_list_fails(folders_with_files_new, folders_extensions)
+    print('_____________________start...')
+    scan_files_and_folders(folder, folder)
 
     max_depth = get_max_depth(folder)
     while max_depth > 0:
@@ -275,14 +281,14 @@ if __name__ == '__main__':
 
     DIRECTORY = {
         'images': 'images', 'video': 'video', 'documents': 'documents',
-        'audio': 'audio', 'archives': 'archives', 'unknown_extensions':'unknown_extensions'
+        'audio': 'audio', 'archives': 'archives', 'unknown_extensions': 'unknown_extensions'
     }
 
     IMAGES_EXTENSIONS = ['.JPEG', '.PNG', '.JPG', '.SVG', '.IMG']
     VIDEO_EXTENSIONS = ['.AVI', '.MP4', '.MOV', '.MKV', '.FLV']
     DOCUMENTS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
     AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
-    ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR', '.RAR']
+    ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
 
     folder_path = parse_path()
     if is_folder(folder_path):
