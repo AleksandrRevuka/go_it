@@ -4,6 +4,7 @@ import sys
 import shutil
 
 from typing import NamedTuple
+from typing import List, Dict, Tuple
 # from prettytable import PrettyTable
 
 
@@ -29,7 +30,7 @@ def parse_path() -> str:
     return "".join(arg for arg in sys.argv[1])
 
 
-def get_max_depth(path):
+def get_max_depth(path: str) -> int:
     """
     Returns the greatest folder nesting depth for the given path.
     """
@@ -42,7 +43,11 @@ def get_max_depth(path):
 
 
 def normalize(name: str) -> str:
-    """Converts Cyrillic to Latin and assigns characters to '_'."""
+    """
+    Converts Cyrillic characters in a string to their Latin equivalents, and replaces any 
+    other non-alphanumeric or non-underscore characters with underscores. Returns the normalized 
+    string.
+    """
 
     trans = {}
     for key, value in zip(CYRILLIC_SYMBOLS, TRANSLATION):
@@ -56,7 +61,13 @@ def normalize(name: str) -> str:
 
 
 def check_for_repetition_of_names(file_info: InfoFile, name: str) -> str:
-    """Check for repetition of names"""
+    """
+    The function checks if a file with the given name already exists in the destination directory. 
+    If it does, the function adds a "_copy{number}" suffix to the name and returns the new name. 
+    If the new name is also taken, it increments the number and tries again until it finds an 
+    available name. If the given name is not taken, the function returns the original name.
+    """
+    
     file_path = os.path.join(file_info.path, file_info.folder)
     file_extension = f"{name}{file_info.extension}"
     file_path_full = os.path.join(file_path, file_extension)
@@ -75,36 +86,49 @@ def check_for_repetition_of_names(file_info: InfoFile, name: str) -> str:
         return name
 
 
-def move_the_file(file_info: InfoFile):
-    """Move the file"""
+def move_the_file(file_info: InfoFile) -> None:
+    """The function moves a file from the old location to the new location."""
+    
     file_name_extension = f"{file_info.name}{file_info.extension}"
     file_old = os.path.join(file_info.old_path, file_name_extension)
     path_file_new = os.path.join(file_info.path, file_info.folder)
 
     file_new_name_extension = f"{file_info.new_name}{file_info.extension}"
     file_new = os.path.join(path_file_new, file_new_name_extension)
-    # print(file_old, "+++++++++", file_new)
+
     shutil.move(file_old, file_new)
 
 
-def extract_files_from_archive(file_info: InfoFile):
-    """Extract files from archive"""
+def extract_files_from_archive(file_info: InfoFile) -> None:
+    """
+    This function creates a new directory with the same name as the archive file in the 
+    directory where the archive file is located. The files in the archive are then extracted 
+    into this new directory using the `shutil.unpack_archive()` function from the `shutil` 
+    module. 
+    """
+    
     archive_name = f"{file_info.new_name}{file_info.extension}"
     archive_path = os.path.join(file_info.path, file_info.folder)
     path_to_unpack = os.path.join(archive_path, file_info.new_name)
     archive_path_full = os.path.join(archive_path, archive_name)
 
     os.mkdir(path_to_unpack)
-    # print(archive_path_full, "_________", path_to_unpack)
     shutil.unpack_archive(archive_path_full, path_to_unpack)
 
 
-def write_the_file_info_to_the_file(file_info: InfoFile):
-    """Write the file info to the file"""
+def write_the_file_info_to_the_file(file_info: InfoFile) -> None:
+    """
+    This function writes the information about a file to a file named 'kn_extension.txt' if the 
+    file belongs to a known extension and to a file named 'un_extension.txt' if the file belongs 
+    to an unknown extension. The function takes an instance of the InfoFile class as an argument, 
+    extracts the file information from it, and writes it to the appropriate file. The function 
+    does not return anything.
+    """
+    
     data_file = [str(file_info.name), str(file_info.extension), str(file_info.path), str(
         file_info.old_path), str(file_info.folder), str(file_info.new_name)+'\n']
     data = ','.join(data_file)
-    print(data)
+    
     if file_info.folder == DIRECTORY["unknown_extensions"]:
         with open('un_extension.txt', 'a', encoding='utf-8') as un_ext_file:
             un_ext_file.write(data)
@@ -113,8 +137,20 @@ def write_the_file_info_to_the_file(file_info: InfoFile):
             kn_ext_file.write(data)
 
 
-def file_controller(file_info: InfoFile):
-    """Controller"""
+def file_controller(file_info: InfoFile) -> None:
+    """
+    The function takes an InfoFile object and performs various operations 
+    on it depending on its properties. It normalizes the file name, checks for any repetitions 
+    of file names, creates a new InfoFile object with the normalized and checked file name, 
+    and writes the file info to a file.
+
+    If the file is in the archives folder, it moves the file to the appropriate folder and 
+    extracts the files from the archive. Otherwise, it simply moves the file to the appropriate folder.
+
+    This function acts as a central control unit for the sorting and management of files 
+    in the given path.
+    """
+    
     file_name_normal = normalize(file_info.name)
     file_name_new = check_for_repetition_of_names(file_info, file_name_normal)
     file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
@@ -129,8 +165,12 @@ def file_controller(file_info: InfoFile):
         move_the_file(file_info_new)
 
 
-def sorting_files_into_folders(file_info: InfoFile):
-    """Sorting files into folders"""
+def sorting_files_into_folders(file_info: InfoFile) -> None:
+    """
+    The function takes an InfoFile object, determines the file's extension and 
+    categorizes the file into a respective directory based on the extension. The 
+    function also calls the file_controller function and passes the InfoFile object to it.
+    """
 
     file_extension = file_info.extension
     if file_extension.upper() in IMAGES_EXTENSIONS:
@@ -164,10 +204,10 @@ def sorting_files_into_folders(file_info: InfoFile):
         write_the_file_info_to_the_file(file_info_new)
 
 
-def scan_files_and_folders(path: str, root_directory=None):
+def scan_files_and_folders(path: str, root_directory=None) -> None:
     """
-    Scans the specified directory and all its subdirectories for files and folders, 
-    and returns a dictionary containing information about each file found.
+    Scans the specified directory and all its subdirectories for files and folders and 
+    passes the file data as a named tuple to the sorting_files_into_folders function.
     """
 
     objects = os.listdir(path)
@@ -191,7 +231,9 @@ def scan_files_and_folders(path: str, root_directory=None):
 
 
 def print_fails(files_info: dict[InfoFile]) -> None:
-    """Print"""
+    """
+    Displays the names of files that have been sorted into folders.
+    """
     images = []
     video = []
     documents = []
@@ -214,24 +256,27 @@ def print_fails(files_info: dict[InfoFile]) -> None:
         if file_info.folder == DIRECTORY['archives']:
             archives.append(file_info.new_name + file_info.extension)
   
-    print(f"List with {DIRECTORY['images']}: {images} \n")
-    print(f"List with {DIRECTORY['video']}: {video} \n")
-    print(f"List with {DIRECTORY['documents']}: {documents} \n")
-    print(f"List with {DIRECTORY['audio']}: {audio} \n")
-    print(f"List with {DIRECTORY['archives']}: {archives} \n")
+    print(f"--> {DIRECTORY['images']}: {images} \n")
+    print(f"--> {DIRECTORY['video']}: {video} \n")
+    print(f"--> {DIRECTORY['documents']}: {documents} \n")
+    print(f"--> {DIRECTORY['audio']}: {audio} \n")
+    print(f"--> {DIRECTORY['archives']}: {archives} \n")
 
 
-def print_extensions(extensions_data: list):
+def print_extensions(extensions_data: list) -> None:
     """Print extensions"""
     unknown_extensions, known_extensions = extensions_data
     
-    print(f"List with known_extensions: {known_extensions} \n")
+    print(f"-> known_extensions: {known_extensions} \n")
 
-    print(f"List with unknown_extensions: {unknown_extensions} \n")
+    print(f"-> unknown_extensions: {unknown_extensions} \n")
 
 
-def deletes_empty_folders(path_folder, root_directory):
-    """Del"""
+def deletes_empty_folders(path_folder, root_directory) -> None:
+    """
+    Recursively delete empty folders in the specified path_folder directory.
+    """
+    
     for object in os.listdir(path_folder):
         object_full_path = os.path.join(path_folder, object)
         if os.path.isdir(object_full_path):
@@ -252,13 +297,15 @@ def deletes_empty_folders(path_folder, root_directory):
             continue
 
 
-def read_file_with_data():
-    """Read file with data"""
+def read_file_with_data() -> Tuple[List[str], Dict[int, InfoFile]]:
+    """
+    Reads data from two files, 'un_extension.txt' and 'kn_extension.txt'
+    """
+    
     with open('un_extension.txt', 'r', encoding='utf-8') as un_ext_file:
         un_ext = []
         for line in un_ext_file:
             file_info = line.split(',')
-            print(file_info)
             un_ext.append(file_info[1])
         un_ext = list(set(un_ext))
         
@@ -279,16 +326,14 @@ def read_file_with_data():
 
 def main(folder: str):
     """Main controller"""
-    print(folder)
 
     scan_files_and_folders(folder, folder)
 
     max_depth = get_max_depth(folder)
-    print('_____________________start_del_____________________')
+
     while max_depth > 0:
         deletes_empty_folders(folder, folder)
         max_depth -= 1
-    print('_____________________end_del_____________________')
     
     data_extension, files_info = read_file_with_data()
     
@@ -323,10 +368,9 @@ if __name__ == '__main__':
         pass
 
     folder_path = parse_path()
+    
     if is_folder(folder_path):
-        print('_____________________start_____________________')
         main(folder_path)
-        print('_____________________end_____________________')
     else:
         print("Something wrong, try again")
 
