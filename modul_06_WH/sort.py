@@ -3,8 +3,7 @@ import os
 import sys
 import shutil
 
-from typing import NamedTuple
-from typing import List, Dict, Tuple
+from typing import NamedTuple, List, Dict, Tuple
 # from prettytable import PrettyTable
 
 
@@ -204,7 +203,7 @@ def sorting_files_into_folders(file_info: InfoFile) -> None:
         write_the_file_info_to_the_file(file_info_new)
 
 
-def scan_files_and_folders(path: str, root_directory=None) -> None:
+def scan_files_and_folders(path: str, root_directory: str) -> None:
     """
     Scans the specified directory and all its subdirectories for files and folders and 
     passes the file data as a named tuple to the sorting_files_into_folders function.
@@ -230,7 +229,7 @@ def scan_files_and_folders(path: str, root_directory=None) -> None:
                 scan_files_and_folders(object_path, root_directory)
 
 
-def print_fails(files_info: dict[InfoFile]) -> None:
+def sort_files_for_print(files_info: Dict[int, InfoFile]) -> None:
     """
     Displays the names of files that have been sorted into folders.
     """
@@ -255,7 +254,17 @@ def print_fails(files_info: dict[InfoFile]) -> None:
         
         if file_info.folder == DIRECTORY['archives']:
             archives.append(file_info.new_name + file_info.extension)
-  
+            
+    folders = [images, video, documents, audio, archives]   
+     
+    return folders
+
+
+def print_folders(folders: list):
+    """Displays the names of files"""
+
+    images, video, documents, audio, archives = folders
+    
     print(f"--> {DIRECTORY['images']}: {images} \n")
     print(f"--> {DIRECTORY['video']}: {video} \n")
     print(f"--> {DIRECTORY['documents']}: {documents} \n")
@@ -324,21 +333,48 @@ def read_file_with_data() -> Tuple[List[str], Dict[int, InfoFile]]:
     
     return data_extension, files_info
 
-def main(folder: str):
+
+def check_folders(root_path: str):
+    """
+    Checks for the existence of specific folders in a given root path, and creates 
+    any missing folders.
+    """
+    objects = os.listdir(root_path)
+    folders = list(DIRECTORY)[:-1]
+    existing_folders = []
+    
+    for object in objects:
+        path_folder = os.path.join(root_path, object)
+        
+        if os.path.isdir(path_folder):
+
+            if object in folders:
+                existing_folders.append(object)
+
+    missing_folders = list(set(folders) - set(existing_folders))
+
+    for folder in missing_folders:
+        path_folder = os.path.join(root_path, folder)
+        os.mkdir(path_folder)
+        
+
+def main(path_folder: str):
     """Main controller"""
 
-    scan_files_and_folders(folder, folder)
+    check_folders(path_folder)
+    
+    scan_files_and_folders(path_folder, path_folder)
 
-    max_depth = get_max_depth(folder)
-
+    max_depth = get_max_depth(path_folder)
     while max_depth > 0:
-        deletes_empty_folders(folder, folder)
+        deletes_empty_folders(path_folder, path_folder)
         max_depth -= 1
     
     data_extension, files_info = read_file_with_data()
     
     print_extensions(data_extension)
-    print_fails(files_info)
+    folders = sort_files_for_print(files_info)
+    print_folders(folders)
     
 
 if __name__ == '__main__':

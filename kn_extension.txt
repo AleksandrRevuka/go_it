@@ -1,4 +1,3 @@
-Релиз_1.0.0.4,.zip,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Alfa 5,archives,Reliz_1.0.0.4
 Katy_Perry_-_Hot_N_Cold,.avi,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Alfa 5,video,Katy_Perry___Hot_N_Cold
 BONES _ BiggestLetdown _ZAKACHAI1.RU_,.mp3,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/tesrfvb,audio,BONES _ BiggestLetdown _ZAKACHAI1.RU_
 BONES _ BiggestLetdown,.mp3,/home/alex/Desktop/garbage,/home/alex/Desktop/garbage/Razgon/tesrfvb,audio,BONES _ BiggestLetdown
