@@ -241,6 +241,7 @@ def scan_files_and_folders(path: str, root_directory: str) -> None:
     except PermissionError as error:
         print(error)
 
+
 def sort_files_for_print(files_info: Dict[int, InfoFile]) -> None:
     """
     Displays the names of files that have been sorted into folders.
