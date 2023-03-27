@@ -94,9 +94,11 @@ def move_the_file(file_info: InfoFile) -> None:
 
     file_new_name_extension = f"{file_info.new_name}{file_info.extension}"
     file_new = os.path.join(path_file_new, file_new_name_extension)
-
-    shutil.move(file_old, file_new)
-
+    try:
+        shutil.move(file_old, file_new)
+    except PermissionError as error:
+        print(error)
+        
 
 def extract_files_from_archive(file_info: InfoFile) -> None:
     """
@@ -110,10 +112,13 @@ def extract_files_from_archive(file_info: InfoFile) -> None:
     archive_path = os.path.join(file_info.path, file_info.folder)
     path_to_unpack = os.path.join(archive_path, file_info.new_name)
     archive_path_full = os.path.join(archive_path, archive_name)
-
-    os.mkdir(path_to_unpack)
-    shutil.unpack_archive(archive_path_full, path_to_unpack)
-
+    
+    try:
+        os.mkdir(path_to_unpack)
+        shutil.unpack_archive(archive_path_full, path_to_unpack)
+    except PermissionError as error:
+        print(error)
+    
 
 def write_the_file_info_to_the_file(file_info: InfoFile) -> None:
     """
@@ -129,10 +134,10 @@ def write_the_file_info_to_the_file(file_info: InfoFile) -> None:
     data = ','.join(data_file)
     
     if file_info.folder == DIRECTORY["unknown_extensions"]:
-        with open('un_extension.txt', 'a', encoding='utf-8') as un_ext_file:
+        with open(FILE_UN_EXT, 'a', encoding='utf-8') as un_ext_file:
             un_ext_file.write(data)
     else:
-        with open('kn_extension.txt', 'a', encoding='utf-8') as kn_ext_file:
+        with open(FILE_KN_EXT, 'a', encoding='utf-8') as kn_ext_file:
             kn_ext_file.write(data)
 
 
@@ -289,18 +294,21 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
     for object in os.listdir(path_folder):
         object_full_path = os.path.join(path_folder, object)
         if os.path.isdir(object_full_path):
-
-            if path_folder == root_directory:
-                if object.lower() not in DIRECTORY:
+            try:
+                if path_folder == root_directory:
+                    if object.lower() not in DIRECTORY:
+                        if os.listdir(object_full_path):
+                            deletes_empty_folders(object_full_path, root_directory)
+                        else:
+                            os.rmdir(object_full_path)
+                else:
                     if os.listdir(object_full_path):
                         deletes_empty_folders(object_full_path, root_directory)
                     else:
                         os.rmdir(object_full_path)
-            else:
-                if os.listdir(object_full_path):
-                    deletes_empty_folders(object_full_path, root_directory)
-                else:
-                    os.rmdir(object_full_path)
+                        
+            except PermissionError as error:
+                print(error)
 
         elif os.path.isfile(object_full_path):
             continue
@@ -311,14 +319,14 @@ def read_file_with_data() -> Tuple[List[str], Dict[int, InfoFile]]:
     Reads data from two files, 'un_extension.txt' and 'kn_extension.txt'
     """
     
-    with open('un_extension.txt', 'r', encoding='utf-8') as un_ext_file:
+    with open(FILE_UN_EXT, 'r', encoding='utf-8') as un_ext_file:
         un_ext = []
         for line in un_ext_file:
             file_info = line.split(',')
             un_ext.append(file_info[1])
         un_ext = list(set(un_ext))
         
-    with open('kn_extension.txt', 'r', encoding='utf-8') as kn_ext_file:
+    with open(FILE_KN_EXT, 'r', encoding='utf-8') as kn_ext_file:
         files_info = {}
         kn_ext = []
         for i, line in enumerate(kn_ext_file):
@@ -339,24 +347,18 @@ def check_folders(root_path: str):
     Checks for the existence of specific folders in a given root path, and creates 
     any missing folders.
     """
-    objects = os.listdir(root_path)
+
     folders = list(DIRECTORY)[:-1]
-    existing_folders = []
     
-    for object in objects:
-        path_folder = os.path.join(root_path, object)
-        
-        if os.path.isdir(path_folder):
-
-            if object in folders:
-                existing_folders.append(object)
-
-    missing_folders = list(set(folders) - set(existing_folders))
-
-    for folder in missing_folders:
+    for folder in folders:
         path_folder = os.path.join(root_path, folder)
-        os.mkdir(path_folder)
-        
+        if not os.path.exists(path_folder):
+
+            try:
+                os.mkdir(path_folder)
+            except PermissionError as error:
+                print(error)
+    
 
 def main(path_folder: str):
     """Main controller"""
@@ -396,11 +398,15 @@ if __name__ == '__main__':
     DOCUMENTS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
     AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
     ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
+    
+    current_dir = os.getcwd()
+    FILE_UN_EXT = os.path.join(current_dir, 'un_extension.txt')
+    FILE_KN_EXT = os.path.join(current_dir, 'kn_extension.txt')
 
-    with open("un_extension.txt", "w") as f:
+    with open(FILE_UN_EXT, "w") as f:
         pass
 
-    with open("kn_extension.txt", "w") as f:
+    with open(FILE_KN_EXT, "w") as f:
         pass
 
     folder_path = parse_path()
