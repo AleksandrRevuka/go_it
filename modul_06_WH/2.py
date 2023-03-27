@@ -1,19 +1,25 @@
-import os
-
-def get_max_depth(path):
-    """
-    Returns the greatest folder nesting depth for the given path.
-    """
-    max_depth = 0
-    for root, dirs, files in os.walk(path):
-        depth = root.count(os.sep)
-        if depth > max_depth:
-            max_depth = depth
-    return max_depth
+"""test"""
+from pathlib import Path
 
 
-print(get_max_depth('/home/alex/Desktop/garbage'))
+p = Path('/home/alex/Desktop/garbage/Batniki/Eth+Dcr_CT_SN.bat')
+pf = Path('/home/alex/Desktop/garbage/Batniki')
 
+print(p.parent)
+print(pf.parent)
 
-# напиши функцію которая будет возвращать найбільшу глубину вложених папок
-# навпаки найбільшу глубину вложених папок
+print('----------------------------')
+print(p.parents)
+print(pf.parents)
+
+print('----------------------------')
+print(p.name)
+print(pf.name)
+
+print('----------------------------')
+print(p.suffix)
+print(pf.suffix)
+
+print('----------------------------')
+print(p.exists())
+print(pf.sp.is_dir())
