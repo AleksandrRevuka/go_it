@@ -98,6 +98,8 @@ def move_the_file(file_info: InfoFile) -> None:
         shutil.move(file_old, file_new)
     except PermissionError as error:
         print(error)
+    except FileNotFoundError as error:
+        print(error)
         
 
 def extract_files_from_archive(file_info: InfoFile) -> None:
@@ -118,6 +120,8 @@ def extract_files_from_archive(file_info: InfoFile) -> None:
         shutil.unpack_archive(archive_path_full, path_to_unpack)
     except PermissionError as error:
         print(error)
+    except RuntimeError:
+        print(f"Archive {archive_name} is encrypted, password required for extraction")
     
 
 def write_the_file_info_to_the_file(file_info: InfoFile) -> None:
@@ -214,25 +218,28 @@ def scan_files_and_folders(path: str, root_directory: str) -> None:
     passes the file data as a named tuple to the sorting_files_into_folders function.
     """
 
-    objects = os.listdir(path)
+    try:
+        objects = os.listdir(path)
+    
 
-    for unk_object in objects:
-        object_path = os.path.join(path, unk_object)
+        for unk_object in objects:
+            object_path = os.path.join(path, unk_object)
 
-        if os.path.isfile(object_path):
-            name_file, extension = os.path.splitext(
-                os.path.basename(object_path))
-            file_info = InfoFile(name_file, extension,
-                                 root_directory, path, None, None)
-            sorting_files_into_folders(file_info)
+            if os.path.isfile(object_path):
+                name_file, extension = os.path.splitext(
+                    os.path.basename(object_path))
+                file_info = InfoFile(name_file, extension,
+                                    root_directory, path, None, None)
+                sorting_files_into_folders(file_info)
 
-        else:
-            if path == root_directory:
-                if unk_object.lower() not in DIRECTORY:
-                    scan_files_and_folders(object_path, root_directory)
             else:
-                scan_files_and_folders(object_path, root_directory)
-
+                if path == root_directory:
+                    if unk_object.lower() not in DIRECTORY:
+                        scan_files_and_folders(object_path, root_directory)
+                else:
+                    scan_files_and_folders(object_path, root_directory)
+    except PermissionError as error:
+        print(error)
 
 def sort_files_for_print(files_info: Dict[int, InfoFile]) -> None:
     """
@@ -290,11 +297,11 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
     """
     Recursively delete empty folders in the specified path_folder directory.
     """
-    
-    for object in os.listdir(path_folder):
-        object_full_path = os.path.join(path_folder, object)
-        if os.path.isdir(object_full_path):
-            try:
+    try:
+        for object in os.listdir(path_folder):
+            object_full_path = os.path.join(path_folder, object)
+            if os.path.isdir(object_full_path):
+            
                 if path_folder == root_directory:
                     if object.lower() not in DIRECTORY:
                         if os.listdir(object_full_path):
@@ -306,12 +313,12 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
                         deletes_empty_folders(object_full_path, root_directory)
                     else:
                         os.rmdir(object_full_path)
-                        
-            except PermissionError as error:
+                            
+            elif os.path.isfile(object_full_path):
+                continue
+            
+    except PermissionError as error:
                 print(error)
-
-        elif os.path.isfile(object_full_path):
-            continue
 
 
 def read_file_with_data() -> Tuple[List[str], Dict[int, InfoFile]]:
