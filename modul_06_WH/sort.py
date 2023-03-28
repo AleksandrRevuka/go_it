@@ -155,17 +155,10 @@ def extract_files_from_archive(file_info: InfoFile) -> None:
 
 def file_controller(data_files: Dict[int, InfoFile]) -> Dict[int, InfoFile]:
     """
-    The function takes an InfoFile object and performs various operations 
-    on it depending on its properties. It normalizes the file name, checks for any repetitions 
-    of file names, creates a new InfoFile object with the normalized and checked file name, 
-    and writes the file info to a file.
-
-    If the file is in the archives folder, it moves the file to the appropriate folder and 
-    extracts the files from the archive. Otherwise, it simply moves the file to the appropriate 
-    folder.
-
-    This function acts as a central control unit for the sorting and management of files 
-    in the given path.
+    The function iterates through the given dictionary containing file information, normalizes 
+    the file names, and checks for name repetitions. It then moves the files to their designated 
+    folders and extracts any files from archives. Finally, it returns a new dictionary containing 
+    the updated file information.
     """
 
     data_files_new = {}
@@ -211,11 +204,12 @@ def check_extension(extension: str) -> str | bool:
     return False
 
 
-def sorting_files_into_folders(data_files: Dict[int, InfoFile]):
+def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[int, InfoFile],
+                                                                         Dict[int, InfoFile]]:
     """
-    The function takes an InfoFile object, determines the file's extension and 
-    categorizes the file into a respective directory based on the extension. The 
-    function also calls the file_controller function and passes the InfoFile object to it.
+    The function categorizes files into known and unknown file types based on their file 
+    extension. Files with known extensions are sorted into corresponding folders, while 
+    files with unknown extensions are sorted into an 'unknown' folder.
     """
     known_files = {}
     unknown_files = {}
@@ -262,10 +256,14 @@ def chack_hash(hash_file: int, hash_files: list) -> int:
     return hash_file
 
 
-def scan_files_and_folders(path: str, root_directory: str, data_files={}, hash_files = []) -> None:
+def scan_files_and_folders(path: str,
+                           root_directory: str,
+                           data_files={},
+                           hash_files=[]) -> None:
     """
-    Scans the specified directory and all its subdirectories for files and folders and 
-    passes the file data as a named tuple to the sorting_files_into_folders function.
+    Recursively scans files and folders in the given path, creating and storing relevant file 
+    information in a dictionary with a hashed key. The function returns a dictionary containing 
+    all the file information found during the scan.
     """
 
     try:
@@ -384,7 +382,8 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
 def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
                                         data_files_full: Dict[int, InfoFile]) -> List[str]:
     """
-    Reads data from two files, 'un_extension.txt' and 'kn_extension.txt'
+    Эта функция извлекает расширения файлов из двух словарей информации о файлах, 
+    «unknown_data_files» и «data_files_full», и возвращает список уникальных расширений.
     """
 
     un_ext = [file_info.extension for file_info in unknown_data_files.values()]
@@ -423,7 +422,8 @@ def main(path_folder: str):
 
     data_files = scan_files_and_folders(path_folder, path_folder)
 
-    known_data_files, unknown_data_files = sorting_files_into_folders(data_files)
+    known_data_files, unknown_data_files = sorting_files_into_folders(
+        data_files)
 
     data_files_full = file_controller(known_data_files)
 
