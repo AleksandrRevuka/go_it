@@ -382,8 +382,8 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
 def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
                                         data_files_full: Dict[int, InfoFile]) -> List[str]:
     """
-    Эта функция извлекает расширения файлов из двух словарей информации о файлах, 
-    «unknown_data_files» и «data_files_full», и возвращает список уникальных расширений.
+    This function extracts file extensions from two file information dictionaries,
+     "unknown_data_files" and "data_files_full", and returns a list of unique extensions.
     """
 
     un_ext = list(set(file_info.extension for file_info in unknown_data_files.values()))
