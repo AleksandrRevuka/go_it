@@ -386,11 +386,9 @@ def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
     «unknown_data_files» и «data_files_full», и возвращает список уникальных расширений.
     """
 
-    un_ext = [file_info.extension for file_info in unknown_data_files.values()]
-    un_ext = list(set(un_ext))
+    un_ext = list(set(file_info.extension for file_info in unknown_data_files.values()))
 
-    kn_ext = [file_info.extension for file_info in data_files_full.values()]
-    kn_ext = list(set(kn_ext))
+    kn_ext = list(set(file_info.extension for file_info in data_files_full.values()))
 
     data_extension = [un_ext, kn_ext]
 
