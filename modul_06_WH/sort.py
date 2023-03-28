@@ -6,6 +6,38 @@ import shutil
 from typing import NamedTuple, List, Dict, Tuple
 # from prettytable import PrettyTable
 
+PUNCTUATION = "#$%&'()*+,-/:;<=>?@[\\]^_`{|}~"  # without "."
+CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
+TRANSLATION = [
+    "a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l",
+    "m", "n", "o", "p", "r", "s", "t", "u", "f", "h", "ts", "ch", "sh",
+    "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g"
+]
+
+DIRECTORY = {
+    'images': 'images', 
+    'video': 'video', 
+    'documents': 'documents',
+    'audio': 'audio', 
+    'archives': 'archives', 
+    'unknown_extensions': 'unknown_extensions'
+}
+
+IMAGES_EXTENSIONS = ['.JPEG', '.PNG', '.JPG', '.SVG', '.IMG']
+VIDEO_EXTENSIONS = ['.AVI', '.MP4', '.MOV', '.MKV', '.FLV']
+DOCUMENTS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
+AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
+ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
+
+folders_ext = [IMAGES_EXTENSIONS, VIDEO_EXTENSIONS, DOCUMENTS_EXTENSIONS,
+           AUDIO_EXTENSIONS, ARCHIVES_EXTENSIONS]
+
+FOLDERS_WITH_EXT = dict(zip(DIRECTORY.values(), folders_ext))
+
+current_dir = os.getcwd()
+FILE_UN_EXT = os.path.join(current_dir, 'un_extension.txt')
+FILE_KN_EXT = os.path.join(current_dir, 'kn_extension.txt')
+
 
 class InfoFile(NamedTuple):
     """File information"""
@@ -134,8 +166,14 @@ def write_the_file_info_to_the_file(file_info: InfoFile) -> None:
     does not return anything.
     """
 
-    data_file = [str(file_info.name), str(file_info.extension), str(file_info.path), str(
-        file_info.old_path), str(file_info.folder), str(file_info.new_name)+'\n']
+    data_file = [
+        str(file_info.name),
+        str(file_info.extension),
+        str(file_info.path),
+        str(file_info.old_path),
+        str(file_info.folder),
+        str(file_info.new_name)+'\n'
+    ]
     data = ','.join(data_file)
 
     if file_info.folder == DIRECTORY["unknown_extensions"]:
@@ -163,8 +201,13 @@ def file_controller(file_info: InfoFile) -> None:
 
     file_name_normal = normalize(file_info.name)
     file_name_new = check_for_repetition_of_names(file_info, file_name_normal)
-    file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                             file_info.old_path, file_info.folder, file_name_new)
+    file_info_new = InfoFile(file_info.name,
+                             file_info.extension,
+                             file_info.path,
+                             file_info.old_path,
+                             file_info.folder,
+                             file_name_new
+                             )
 
     write_the_file_info_to_the_file(file_info_new)
 
@@ -175,6 +218,17 @@ def file_controller(file_info: InfoFile) -> None:
         move_the_file(file_info_new)
 
 
+def check_extension(extension: str) -> str | bool:
+    """
+    Check if the given file extension is present in the list of extensions associated 
+    with any folder in the FOLDERS_WITH_EXT dictionary.
+    """
+    for key, ext in FOLDERS_WITH_EXT.items():
+        if extension.upper() in ext:
+            return key
+    return False
+
+
 def sorting_files_into_folders(file_info: InfoFile) -> None:
     """
     The function takes an InfoFile object, determines the file's extension and 
@@ -182,35 +236,27 @@ def sorting_files_into_folders(file_info: InfoFile) -> None:
     function also calls the file_controller function and passes the InfoFile object to it.
     """
 
-    file_extension = file_info.extension
-    if file_extension.upper() in IMAGES_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['images'], None)
-        file_controller(file_info_new)
+    folder = check_extension(file_info.extension)
 
-    elif file_extension.upper() in VIDEO_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['video'], None)
+    if folder:
+        file_info_new = InfoFile(
+            file_info.name,
+            file_info.extension,
+            file_info.path,
+            file_info.old_path,
+            folder,
+            None
+        )
         file_controller(file_info_new)
-
-    elif file_extension.upper() in DOCUMENTS_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['documents'], None)
-        file_controller(file_info_new)
-
-    elif file_extension.upper() in AUDIO_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['audio'], None)
-        file_controller(file_info_new)
-
-    elif file_extension.upper() in ARCHIVES_EXTENSIONS:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['archives'], None)
-        file_controller(file_info_new)
-
     else:
-        file_info_new = InfoFile(file_info.name, file_info.extension, file_info.path,
-                                 file_info.old_path, DIRECTORY['unknown_extensions'], None)
+        file_info_new = InfoFile(
+            file_info.name,
+            file_info.extension,
+            file_info.path,
+            file_info.old_path,
+            DIRECTORY['unknown_extensions'],
+            None
+        )
         write_the_file_info_to_the_file(file_info_new)
 
 
@@ -229,8 +275,10 @@ def scan_files_and_folders(path: str, root_directory: str) -> None:
             if os.path.isfile(object_path):
                 name_file, extension = os.path.splitext(
                     os.path.basename(object_path))
-                file_info = InfoFile(name_file, extension,
-                                     root_directory, path, None, None)
+                file_info = InfoFile(name_file,
+                                     extension,
+                                     root_directory,
+                                     path, None, None)
                 sorting_files_into_folders(file_info)
 
             else:
@@ -300,12 +348,12 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
     Recursively delete empty folders in the specified path_folder directory.
     """
     try:
-        for object in os.listdir(path_folder):
-            object_full_path = os.path.join(path_folder, object)
+        for path_object in os.listdir(path_folder):
+            object_full_path = os.path.join(path_folder, path_object)
             if os.path.isdir(object_full_path):
 
                 if path_folder == root_directory:
-                    if object.lower() not in DIRECTORY:
+                    if path_object.lower() not in DIRECTORY:
                         if os.listdir(object_full_path):
                             deletes_empty_folders(
                                 object_full_path, root_directory)
@@ -391,28 +439,6 @@ def main(path_folder: str):
 
 
 if __name__ == '__main__':
-    PUNCTUATION = "#$%&'()*+,-/:;<=>?@[\\]^_`{|}~"  # without "."
-    CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
-    TRANSLATION = [
-        "a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l",
-        "m", "n", "o", "p", "r", "s", "t", "u", "f", "h", "ts", "ch", "sh",
-        "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g"
-    ]
-
-    DIRECTORY = {
-        'images': 'images', 'video': 'video', 'documents': 'documents',
-        'audio': 'audio', 'archives': 'archives', 'unknown_extensions': 'unknown_extensions'
-    }
-
-    IMAGES_EXTENSIONS = ['.JPEG', '.PNG', '.JPG', '.SVG', '.IMG']
-    VIDEO_EXTENSIONS = ['.AVI', '.MP4', '.MOV', '.MKV', '.FLV']
-    DOCUMENTS_EXTENSIONS = ['.DOC', '.DOCX', '.TXT', '.PDF', '.XLSX', '.PPTX']
-    AUDIO_EXTENSIONS = ['.MP3', '.OGG', '.WAV', '.AMR']
-    ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
-
-    current_dir = os.getcwd()
-    FILE_UN_EXT = os.path.join(current_dir, 'un_extension.txt')
-    FILE_KN_EXT = os.path.join(current_dir, 'kn_extension.txt')
 
     with open(FILE_UN_EXT, "w") as f:
         pass
@@ -420,10 +446,10 @@ if __name__ == '__main__':
     with open(FILE_KN_EXT, "w") as f:
         pass
 
-    folder_path = parse_path()
+    FOLDER_PATH = parse_path()
 
-    if is_folder(folder_path):
-        main(folder_path)
+    if is_folder(FOLDER_PATH):
+        main(FOLDER_PATH)
     else:
         print("Something wrong, try again")
 
