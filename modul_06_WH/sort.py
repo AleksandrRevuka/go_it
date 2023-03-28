@@ -55,7 +55,7 @@ def is_folder(test_path: str) -> bool:
 
 def parse_path() -> str:
     """Get path from input data"""
-    return "".join(arg for arg in sys.argv[1])
+    return sys.argv[1]
 
 
 def get_max_depth(path: str) -> int:
