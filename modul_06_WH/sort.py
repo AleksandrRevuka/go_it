@@ -34,7 +34,7 @@ ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
 folders_ext = [IMAGES_EXTENSIONS, VIDEO_EXTENSIONS, DOCUMENTS_EXTENSIONS,
                AUDIO_EXTENSIONS, ARCHIVES_EXTENSIONS]
 
-FOLDERS_WITH_EXT = dict(zip(DIRECTORY.values(), folders_ext))
+FOLDERS_WITH_EXT: Dict[str, List[str]] = dict(zip(DIRECTORY.values(), folders_ext))
 
 
 class InfoFile(NamedTuple):
@@ -64,7 +64,7 @@ def get_max_depth(path: str) -> int:
     Returns the greatest folder nesting depth for the given path.
     """
     max_depth = 0
-    for root, dirs, files in os.walk(path):
+    for root, _, __ in os.walk(path):
         depth = root.count(os.sep)
         if depth > max_depth:
             max_depth = depth
@@ -122,6 +122,7 @@ def move_the_file(file_info: InfoFile) -> str:
 
     file_new_name_extension = f"{file_info.new_name}{file_info.extension}"
     file_new = os.path.join(path_file_new, file_new_name_extension)
+    
     try:
         shutil.move(file_old, file_new)
     except PermissionError as error:
@@ -244,7 +245,8 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
 
 def scan_files_and_folders(path: str,
                            root_directory: str,
-                           data_files={}, ) -> Dict[int, InfoFile]:
+                           data_files={}) -> Dict[int, InfoFile]:
+
     """
     Recursively scans files and folders in the given path, creating and storing relevant file 
     information in a dictionary with a hashed key. The function returns a dictionary containing 
@@ -360,7 +362,7 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
         print(error)
 
 
-def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
+def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile], 
                                         data_files_full: Dict[int, InfoFile]) -> list[list[str]]:
     """
     This function extracts file extensions from two file information dictionaries,
