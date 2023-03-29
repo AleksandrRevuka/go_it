@@ -1,19 +1,18 @@
-import pathlib
+
+from setuptools import setup
 
 
-def walk(path):
-    for entry in pathlib.Path(path).iterdir():
-        if entry.is_file():
-            yield path, [], [entry.name]
-        elif entry.is_dir():
-            yield entry.absolute(), [
-                subdir.name for subdir in entry.iterdir() if subdir.is_dir()
-            ], [file.name for file in entry.glob("*") if file.is_file()]
-            yield from walk(entry)
+def do_setup(args_dict, requires, entry_points):
+    """Parametrs"""
+    setup(name=args_dict['name'],
+          version=args_dict['version'],
+          description=args_dict['description'],
+          url=args_dict['url'],
+          author=args_dict['author'],
+          author_email=args_dict['author_email'],
+          license=args_dict['license'],
+          packages=args_dict['packages'],
+          install_requires=requires,
+          entry_points=entry_points
+          )
 
-
-# Пример использования
-for root, dirs, files in walk("/path"):
-    print(f"root: {root}")
-    print(f"dirs: {dirs}")
-    print(f"files: {files}")
