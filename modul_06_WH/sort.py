@@ -33,7 +33,7 @@ ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
 folders_ext = [IMAGES_EXTENSIONS, VIDEO_EXTENSIONS, DOCUMENTS_EXTENSIONS,
                AUDIO_EXTENSIONS, ARCHIVES_EXTENSIONS]
 
-FOLDERS_WITH_EXT = dict(zip(DIRECTORY.values(), folders_ext))
+FOLDERS_WITH_EXT: Dict[str, List[str]] = dict(zip(DIRECTORY.values(), folders_ext))
 
 
 class InfoFile(NamedTuple):
@@ -63,7 +63,7 @@ def get_max_depth(path: str) -> int:
     Returns the greatest folder nesting depth for the given path.
     """
     max_depth = 0
-    for root, dirs, files in os.walk(path):
+    for root, _, __ in os.walk(path):
         depth = root.count(os.sep)
         if depth > max_depth:
             max_depth = depth
@@ -243,8 +243,7 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
 
 def scan_files_and_folders(path: str,
                            root_directory: str,
-                           data_files={},
-                           hash_files=[]) -> None:
+                           data_files={}) -> None:
     """
     Recursively scans files and folders in the given path, creating and storing relevant file 
     information in a dictionary with a hashed key. The function returns a dictionary containing 
@@ -264,9 +263,7 @@ def scan_files_and_folders(path: str,
                                      extension,
                                      root_directory,
                                      path, None, None)
-                new_hash = hash(object_path)
-                data_files[new_hash] = file_info
-                hash_files.append(new_hash)
+                data_files[hash(object_path)] = file_info
 
             else:
                 if path == root_directory:
