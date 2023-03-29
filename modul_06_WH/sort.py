@@ -4,6 +4,7 @@ import sys
 import shutil
 
 from typing import NamedTuple, List, Dict, Tuple
+
 # from prettytable import PrettyTable
 
 
@@ -112,7 +113,7 @@ def check_for_repetition_of_names(file_info: InfoFile, name: str, move_files: li
         return name
 
 
-def move_the_file(file_info: InfoFile) -> None:
+def move_the_file(file_info: InfoFile) -> str:
     """The function moves a file from the old location to the new location."""
 
     file_name_extension = f"{file_info.name}{file_info.extension}"
@@ -243,7 +244,7 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
 
 def scan_files_and_folders(path: str,
                            root_directory: str,
-                           data_files={},) -> None:
+                           data_files={}, ) -> Dict[int, InfoFile]:
     """
     Recursively scans files and folders in the given path, creating and storing relevant file 
     information in a dictionary with a hashed key. The function returns a dictionary containing 
@@ -268,11 +269,9 @@ def scan_files_and_folders(path: str,
             else:
                 if path == root_directory:
                     if unk_object.lower() not in DIRECTORY:
-                        data_files = scan_files_and_folders(
-                            object_path, root_directory)
+                        data_files = scan_files_and_folders(object_path, root_directory)
                 else:
-                    data_files = scan_files_and_folders(
-                        object_path, root_directory)
+                    data_files = scan_files_and_folders(object_path, root_directory)
 
     except PermissionError:
         print(f'Permission denied: {path}')
@@ -280,7 +279,7 @@ def scan_files_and_folders(path: str,
     return data_files
 
 
-def sort_files_for_print(files_info: Dict[int, InfoFile]) -> None:
+def sort_files_for_print(files_info: Dict[int, InfoFile]) -> List[list[str]]:
     """
     Displays the names of files that have been sorted into folders.
     """
@@ -362,7 +361,7 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
 
 
 def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
-                                        data_files_full: Dict[int, InfoFile]) -> List[str]:
+                                        data_files_full: Dict[int, InfoFile]) -> list[list[str]]:
     """
     This function extracts file extensions from two file information dictionaries,
      "unknown_data_files" and "data_files_full", and returns a list of unique extensions.
@@ -430,3 +429,4 @@ if __name__ == '__main__':
         print("Something wrong, try again")
 
 # python modul_06_WH/sort.py /home/alex/Desktop/garbage
+# python modul_06_WH/sort.py D:\garb
