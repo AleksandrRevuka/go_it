@@ -55,7 +55,7 @@ def is_folder(test_path: str) -> bool:
 
 def parse_path() -> str:
     """Get path from input data"""
-    return "".join(arg for arg in sys.argv[1])
+    return sys.argv[1]
 
 
 def get_max_depth(path: str) -> int:
@@ -241,21 +241,6 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
     return known_files, unknown_files
 
 
-def chack_hash(hash_file: int, hash_files: list) -> int:
-    """ 
-    This function checks if a given hash value exists in a list of hash values. 
-    If the given hash value exists, it increments it until it finds a hash value that doesn't 
-    exist in the list. The function returns the new hash value.
-    """
-    if hash_file in hash_files:
-        while True:
-            hash_file += 1
-            if hash_file not in hash_files:
-                return hash_file
-
-    return hash_file
-
-
 def scan_files_and_folders(path: str,
                            root_directory: str,
                            data_files={},
@@ -279,7 +264,7 @@ def scan_files_and_folders(path: str,
                                      extension,
                                      root_directory,
                                      path, None, None)
-                new_hash = chack_hash(hash(unk_object), hash_files)
+                new_hash = hash(object_path)
                 data_files[new_hash] = file_info
                 hash_files.append(new_hash)
 
@@ -292,8 +277,8 @@ def scan_files_and_folders(path: str,
                     data_files = scan_files_and_folders(
                         object_path, root_directory)
 
-    except PermissionError as error:
-        print(error)
+    except PermissionError:
+        print(f'Permission denied: {path}')
 
     return data_files
 
@@ -382,15 +367,13 @@ def deletes_empty_folders(path_folder, root_directory) -> None:
 def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
                                         data_files_full: Dict[int, InfoFile]) -> List[str]:
     """
-    Эта функция извлекает расширения файлов из двух словарей информации о файлах, 
-    «unknown_data_files» и «data_files_full», и возвращает список уникальных расширений.
+    This function extracts file extensions from two file information dictionaries,
+     "unknown_data_files" and "data_files_full", and returns a list of unique extensions.
     """
 
-    un_ext = [file_info.extension for file_info in unknown_data_files.values()]
-    un_ext = list(set(un_ext))
+    un_ext = list(set(file_info.extension for file_info in unknown_data_files.values()))
 
-    kn_ext = [file_info.extension for file_info in data_files_full.values()]
-    kn_ext = list(set(kn_ext))
+    kn_ext = list(set(file_info.extension for file_info in data_files_full.values()))
 
     data_extension = [un_ext, kn_ext]
 
