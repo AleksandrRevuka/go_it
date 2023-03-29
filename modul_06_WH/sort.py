@@ -243,8 +243,7 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
 
 def scan_files_and_folders(path: str,
                            root_directory: str,
-                           data_files={},
-                           hash_files=[]) -> None:
+                           data_files={},) -> None:
     """
     Recursively scans files and folders in the given path, creating and storing relevant file 
     information in a dictionary with a hashed key. The function returns a dictionary containing 
@@ -264,9 +263,7 @@ def scan_files_and_folders(path: str,
                                      extension,
                                      root_directory,
                                      path, None, None)
-                new_hash = hash(object_path)
-                data_files[new_hash] = file_info
-                hash_files.append(new_hash)
+                data_files[hash(object_path)] = file_info
 
             else:
                 if path == root_directory:
