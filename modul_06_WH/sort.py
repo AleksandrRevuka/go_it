@@ -241,21 +241,6 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
     return known_files, unknown_files
 
 
-def check_hash(hash_file: int, hash_files: list) -> int:
-    """ 
-    This function checks if a given hash value exists in a list of hash values. 
-    If the given hash value exists, it increments it until it finds a hash value that doesn't 
-    exist in the list. The function returns the new hash value.
-    """
-    if hash_file in hash_files:
-        while True:
-            hash_file += 1
-            if hash_file not in hash_files:
-                return hash_file
-
-    return hash_file
-
-
 def scan_files_and_folders(path: str,
                            root_directory: str,
                            data_files={},
@@ -279,7 +264,7 @@ def scan_files_and_folders(path: str,
                                      extension,
                                      root_directory,
                                      path, None, None)
-                new_hash = check_hash(hash(unk_object), hash_files)
+                new_hash = hash(object_path)
                 data_files[new_hash] = file_info
                 hash_files.append(new_hash)
 
@@ -292,8 +277,8 @@ def scan_files_and_folders(path: str,
                     data_files = scan_files_and_folders(
                         object_path, root_directory)
 
-    except PermissionError as error:
-        print(error)
+    except PermissionError:
+        print(f'Permission denied: {path}')
 
     return data_files
 
