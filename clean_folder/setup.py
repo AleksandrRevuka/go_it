@@ -15,7 +15,7 @@ setup(
         "Operating System :: OS Independent"],
     packages=find_namespace_packages(),
     data_files=[
-        ('clean_folder', ['clean_folder/README', 'clean_folder/LICENSE'])],
+        ('clean_folder', ['clean_folder/README.md', 'clean_folder/LICENSE'])],
     include_package_data=True,
     entry_points={'console_scripts': ['clean-folder=clean_folder.sort:main']}
 )
