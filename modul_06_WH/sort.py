@@ -241,15 +241,14 @@ def sorting_files_into_folders(data_files: Dict[int, InfoFile]) -> Tuple[Dict[in
     return known_files, unknown_files
 
 
-def scan_files_and_folders(path: str,
-                           root_directory: str,
-                           data_files={}) -> None:
+def scan_files_and_folders(path: str, root_directory: str) -> dict:
     """
     Recursively scans files and folders in the given path, creating and storing relevant file 
     information in a dictionary with a hashed key. The function returns a dictionary containing 
     all the file information found during the scan.
     """
-
+    data_files = {}
+    
     try:
         objects = os.listdir(path)
 
@@ -268,11 +267,11 @@ def scan_files_and_folders(path: str,
             else:
                 if path == root_directory:
                     if unk_object.lower() not in DIRECTORY:
-                        data_files = scan_files_and_folders(
-                            object_path, root_directory)
+                        data_files.update(scan_files_and_folders(
+                            object_path, root_directory))
                 else:
-                    data_files = scan_files_and_folders(
-                        object_path, root_directory)
+                    data_files.update(scan_files_and_folders(
+                        object_path, root_directory))
 
     except PermissionError:
         print(f'Permission denied: {path}')
