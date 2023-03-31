@@ -33,7 +33,8 @@ ARCHIVES_EXTENSIONS = ['.ZIP', '.GZ', '.TAR']
 folders_ext = [IMAGES_EXTENSIONS, VIDEO_EXTENSIONS, DOCUMENTS_EXTENSIONS,
                AUDIO_EXTENSIONS, ARCHIVES_EXTENSIONS]
 
-FOLDERS_WITH_EXT: Dict[str, List[str]] = dict(zip(DIRECTORY.values(), folders_ext))
+FOLDERS_WITH_EXT: Dict[str, List[str]] = dict(
+    zip(DIRECTORY.values(), folders_ext))
 
 
 class InfoFile(NamedTuple):
@@ -248,7 +249,7 @@ def scan_files_and_folders(path: str, root_directory: str) -> dict:
     all the file information found during the scan.
     """
     data_files = {}
-    
+
     try:
         objects = os.listdir(path)
 
@@ -367,9 +368,11 @@ def extract_the_extension_from_the_data(unknown_data_files: Dict[int, InfoFile],
      "unknown_data_files" and "data_files_full", and returns a list of unique extensions.
     """
 
-    un_ext = list(set(file_info.extension for file_info in unknown_data_files.values()))
+    un_ext = list(
+        set(file_info.extension for file_info in unknown_data_files.values()))
 
-    kn_ext = list(set(file_info.extension for file_info in data_files_full.values()))
+    kn_ext = list(
+        set(file_info.extension for file_info in data_files_full.values()))
 
     data_extension = [un_ext, kn_ext]
 
