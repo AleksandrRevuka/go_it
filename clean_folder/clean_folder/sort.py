@@ -397,38 +397,39 @@ def check_folders(root_path: str):
                 print(error)
 
 
-def main(path_folder: str):
+def main():
     """Main controller"""
+    folder_path = parse_path()
 
-    check_folders(path_folder)
+    if is_folder(folder_path):
 
-    data_files = scan_files_and_folders(path_folder, path_folder)
+        check_folders(folder_path)
 
-    known_data_files, unknown_data_files = sorting_files_into_folders(
-        data_files)
+        data_files = scan_files_and_folders(folder_path, folder_path)
 
-    data_files_full = file_controller(known_data_files)
+        known_data_files, unknown_data_files = sorting_files_into_folders(
+            data_files)
 
-    max_depth = get_max_depth(path_folder)
-    while max_depth > 0:
-        deletes_empty_folders(path_folder, path_folder)
-        max_depth -= 1
+        data_files_full = file_controller(known_data_files)
 
-    data_extension = extract_the_extension_from_the_data(
-        unknown_data_files, data_files_full)
+        max_depth = get_max_depth(folder_path)
 
-    print_extensions(data_extension)
-    folders = sort_files_for_print(data_files_full)
-    print_folders(folders)
+        while max_depth > 0:
+            deletes_empty_folders(folder_path, folder_path)
+            max_depth -= 1
 
+        data_extension = extract_the_extension_from_the_data(
+            unknown_data_files, data_files_full)
 
-if __name__ == '__main__':
+        print_extensions(data_extension)
+        folders = sort_files_for_print(data_files_full)
+        print_folders(folders)
 
-    FOLDER_PATH = parse_path()
-
-    if is_folder(FOLDER_PATH):
-        main(FOLDER_PATH)
     else:
         print("Something wrong, try again")
 
-# python modul_06_WH/sort.py /home/alex/Desktop/garbage
+
+if __name__ == '__main__':
+    main()
+
+# python clean_folder/clean_folder/sort.py /home/alex/Desktop/garbage
