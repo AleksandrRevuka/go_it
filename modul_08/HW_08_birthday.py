@@ -28,7 +28,10 @@ USERS = [
 
 
 def get_birthdays_per_week(users):
-    """..."""
+    """
+    Prints a table of the birthdays for each day of the week. 
+    Users whose birthdays fall on a weekend are listed on the following Monday.
+    """
     weekend_days = ["Saturday", "Sunday"]
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     users_birthday = {day: [] for day in days_of_week}
@@ -44,8 +47,10 @@ def get_birthdays_per_week(users):
 
     table = PrettyTable()
     table.field_names = ["Day of Week", "Birthdays 🎉 🎂 🎁"]
+
     for day, birthdays in users_birthday.items():
         table.add_row([day, f"{', '.join(birthdays)}" if birthdays else "-"])
+        
     print(table)
 
 
