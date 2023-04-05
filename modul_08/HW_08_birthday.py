@@ -56,10 +56,8 @@ def print_table_with_user_birthday(users_birthday: Dict[str, list], days_of_week
     today = datetime.today().weekday()
 
     sorted_users_birthday = {}
-    for i, day in enumerate(days_of_week[today:] + days_of_week[:today]):
+    for day in days_of_week[today:] + days_of_week[:today]:
         sorted_users_birthday[day] = users_birthday[day]
-        if i == 4:
-            break
 
     table = PrettyTable()
     table.field_names = ["Day of Week", "Birthdays 🎉 🎂 🎁"]
