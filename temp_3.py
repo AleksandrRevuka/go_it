@@ -76,26 +76,55 @@
 # print(f2_func(10, 5))
 
 
-def complicated(x, y):
-    return x / y
+# def complicated(x, y):
+#     return x / y
 
 
-def logged_func(func):
-    def inner(x, y):
-        print(f'called with {x}, {y}')
-        result = func(x, y)
-        print(f'result: {result}')
-        return result
-    return inner
+# def logged_func(func):
+#     def inner(x, y):
+#         print(f'called with {x}, {y}')
+#         result = func(x, y)
+#         print(f'result: {result}')
+#         return result
+#     return inner
 
 
-complicated = logged_func(complicated)
-b = complicated(10, 5)
+# complicated = logged_func(complicated)
+# b = complicated(10, 5)
 
 
-OPERATIONS = {
-    '-': lambda x, y: x - y,
-    '+': lambda x, y: x + y,
-    '*': lambda x, y: x * y,
-    '/': lambda x, y: x / y,
-}
+# OPERATIONS = {
+#     '-': lambda x, y: x - y,
+#     '+': lambda x, y: x + y,
+#     '*': lambda x, y: x * y,
+#     '/': lambda x, y: x / y,
+# }
+
+# tp = tuple(range(3))
+# tp = list(set('3456аівфлдратсловрдлапріуепрмодлявраочвапсофіупрща'))
+
+# print(tp)
+
+# class Human:
+#     def __init__(self, name) -> None:
+#         self.name = name
+
+
+#     def voice(self):
+#         print(f"Hello! My name is {self.name}")
+
+# g = Human('Tanya')
+# print(g.name)
+# g.name = 'Olya'
+# print(g.name)
+
+from collections import UserList
+
+class CountableList(UserList):
+    def sum(self):
+        return sum(map(int, self.data))
+
+
+countable = CountableList([1, '2', 3, '4'])
+countable.append('5')
+print(countable.sum()) 
