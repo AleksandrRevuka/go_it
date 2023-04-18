@@ -13,10 +13,12 @@ class Animal:
 class Dog(Animal):
     def __init__(self, nickname, weight, breed):
         super().__init__(nickname, weight)
+
         self.breed = breed
-    
+
     def say(self):
         return "Woof"
-    
+
+
 dog = Dog("Barbos", 23, "labrador")
 print(dog.nickname)
