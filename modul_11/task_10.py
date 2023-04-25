@@ -72,19 +72,29 @@ class Vector:
         return f"Vector({self.coordinates.x},{self.coordinates.y})"
 
     def __eq__(self, vector):
-        
+        return self.len() == vector.len()
 
     def __ne__(self, vector):
-        
+        return self.len() != vector.len()
 
     def __lt__(self, vector):
-        
+        return self.len() < vector.len()
 
     def __gt__(self, vector):
-        
+        return self.len() > vector.len()
 
     def __le__(self, vector):
-        
+        return self.len() <= vector.len()
 
     def __ge__(self, vector):
-        
+        return self.len() >= vector.len()
+    
+vector1 = Vector(Point(1, 10))
+vector2 = Vector(Point(3, 10))
+
+print(vector1 == vector2)  # False
+print(vector1 != vector2)  # True
+print(vector1 > vector2)  # False
+print(vector1 < vector2)  # True
+print(vector1 >= vector2)  # False
+print(vector1 <= vector2)  # True
