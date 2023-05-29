@@ -1,46 +1,3 @@
-
-
-def cakes(recipe: dict, available: dict) -> int:
-    # result = []
-    # for ingrid, count in recipe.items():
-    #     if ingrid in available:
-    #         result.append(available[ingrid] // count)
-    #     else:
-    #         return 0
-    # return min(result)
-    
-    return     min(map(lambda ingrid, count: available[ingrid] // count if ingrid in available else 0, recipe.keys(), recipe.values()))
-    # return min(available[ingrid] // count if ingrid in available else 0 for ingrid, count in recipe.items())
-
-
-recipe_ = {'flour': 500, 'sugar': 200, 'eggs': 1}
-available_ = {'flour': 1200, 'sugar': 1200, 'eggs': 5, 'milk': 200}
-print(cakes(recipe_, available_))
-
-# class Email:
-#     """..."""
-#     def __init__(self, email: str | None = None):
-#         self.email: str = email
-
-#     @property
-#     def email(self) -> str | None:
-#         return self.__email
-
-#     @email.setter
-#     def email(self, new_email: str) -> None:
-#         if new_email is None:
-#             self.__email = None
-#         else:
-#             self.__email = new_email
-            
-
-
-# email_ = Email('sasha')
-# # print(dir(email_))
-# print(email_.email)
-
-
-
 # from collections import Counter
 
 # def get_two_biggest(data: dict):
@@ -161,13 +118,13 @@ print(cakes(recipe_, available_))
 # g.name = 'Olya'
 # print(g.name)
 
-# from collections import UserList
+from collections import UserList
 
-# class CountableList(UserList):
-#     def sum(self):
-#         return sum(map(int, self.data))
+class CountableList(UserList):
+    def sum(self):
+        return sum(map(int, self.data))
 
 
-# countable = CountableList([1, '2', 3, '4'])
-# countable.append('5')
-# print(countable.sum()) 
+countable = CountableList([1, '2', 3, '4'])
+countable.append('5')
+print(countable.sum()) 
