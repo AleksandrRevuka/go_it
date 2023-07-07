@@ -7,9 +7,9 @@ from datetime import datetime
 
 
 def get_str_date(date):
-    # date = list(map(int, date.split(' ')[0].split('-')))
-    # date = datetime(year=date[0], month=date[1], day=date[2])
-    # return date.strftime('%A %d %B %Y')
+#     date = list(map(int, date.split(' ')[0].split('-')))
+#     date = datetime(year=date[0], month=date[1], day=date[2])
+#     return date.strftime('%A %d %B %Y')
 
     date = datetime.fromisoformat(date[:-1])
     return date.strftime('%A %d %B %Y')
